@@ -1,118 +1,65 @@
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { OtpVerifyDto } from './dto/otp-verify.dto';
-import { EmailDto } from './dto/email.dto';
-import { RegisterDto } from './dto/register.dto';
-import { UpdateCustomerProfileDto } from 'src/users/dto/update-customer-profile.dto';
-import { UsersService } from 'src/users/users.service';
-import { ChangePasswordDto } from 'src/users/dto/change-password.dto';
 export declare class AuthController {
     private readonly authService;
-    private readonly userService;
-    constructor(authService: AuthService, userService: UsersService);
-    login(loginDto: LoginDto): Promise<{
-        access_token: string;
-        user: {
-            id: any;
-            name: any;
-            email: any;
-            role: any;
-        };
-    }>;
-    register(registerDto: RegisterDto): Promise<{
-        access_token: string;
-        user: {
-            id: any;
-            name: any;
-            email: any;
-            role: any;
-        };
-    } | {
+    constructor(authService: AuthService);
+    sendOtp(loginDto: LoginDto): Promise<{
         message: string;
-        otp?: undefined;
-    } | {
-        message: string;
-        otp: string;
-    }>;
-    registerAdmin(registerDto: RegisterDto): Promise<{
-        access_token: string;
-        user: {
-            id: any;
-            name: any;
-            email: any;
-            role: any;
-        };
-    } | {
-        message: string;
-        otp?: undefined;
-    } | {
-        message: string;
-        otp: string;
-    }>;
-    generateOtp(emailDto: EmailDto): Promise<{
-        message: string;
-        otp?: undefined;
-    } | {
-        message: string;
-        otp: string;
     }>;
     verifyOtp(otpVerifyDto: OtpVerifyDto): Promise<{
-        access_token: string;
         user: {
-            id: any;
-            name: any;
-            email: any;
-            role: any;
+            email: string;
+            id: string;
+            role: import(".prisma/client").$Enums.Roles;
+            otp: string | null;
+            expiresAt: Date | null;
+            is_verified: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+            lastLogin: Date | null;
         };
+        accessToken: string;
+        message: string;
+        status: number;
     }>;
     getAdminProfile(req: any): Promise<{
-        id: string;
         email: string;
+        id: string;
         role: import(".prisma/client").$Enums.Roles;
         createdAt: Date;
         updatedAt: Date;
         AdminProfile: {
-            name: string;
-            phone: string;
-            profilePicture: string;
             notes: string;
         };
     }>;
     getCustomerProfile(req: any): Promise<{
-        id: string;
         email: string;
+        id: string;
         role: import(".prisma/client").$Enums.Roles;
         createdAt: Date;
         updatedAt: Date;
         CustomerProfile: {
-            name: string;
-            phone: string;
-            address: string;
-            city: string;
-            state: string;
-            postalCode: string;
-            country: string;
-            profilePicture: string;
             addresses: {
-                id: string;
-                createdAt: Date;
-                updatedAt: Date;
-                name: string;
-                phone: string | null;
                 address: string;
+                name: string;
+                phone: string;
                 city: string;
                 state: string;
                 postalCode: string;
                 country: string;
-                customerProfileId: string | null;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                customerProfileId: string;
                 isDefault: boolean;
             }[];
             reviews: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                productId: string;
                 customerProfileId: string | null;
+                productId: string;
                 rating: number;
                 comment: string | null;
             }[];
@@ -127,6 +74,7 @@ export declare class AuthController {
                 createdAt: Date;
                 updatedAt: Date;
                 notes: string | null;
+                customerProfileId: string | null;
                 orderNumber: string;
                 status: import(".prisma/client").$Enums.OrderStatus;
                 paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
@@ -136,48 +84,29 @@ export declare class AuthController {
                 discountAmount: import("@prisma/client/runtime/library").Decimal;
                 shippingAddressId: string | null;
                 trackingID: string | null;
-                customerProfileId: string | null;
             }[];
             cart: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                productId: string;
                 customerProfileId: string | null;
+                productId: string;
                 quantity: number;
             }[];
+            BankDetails: {
+                id: string;
+                customerProfileId: string | null;
+                accountNumber: string;
+                accountHolderName: string;
+                ifscCode: string;
+            }[];
+            Wishlist: {
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                customerProfileId: string;
+                productId: string;
+            }[];
         };
-    }>;
-    createProfile(req: any, data: UpdateCustomerProfileDto, image?: Express.Multer.File): Promise<{
-        id: string;
-        name: string;
-        phone: string | null;
-        address: string;
-        city: string;
-        state: string;
-        postalCode: string;
-        country: string;
-        profilePicture: string | null;
-        userId: string;
-    }>;
-    updateProfile(req: any, data: UpdateCustomerProfileDto, image?: Express.Multer.File): Promise<{
-        id: string;
-        name: string;
-        phone: string | null;
-        address: string;
-        city: string;
-        state: string;
-        postalCode: string;
-        country: string;
-        profilePicture: string | null;
-        userId: string;
-    }>;
-    changePassword(req: any, dto: ChangePasswordDto): Promise<{
-        id: string;
-        email: string;
-        role: import(".prisma/client").$Enums.Roles;
-        createdAt: Date;
-        updatedAt: Date;
-        password: string | null;
     }>;
 }

@@ -1,16 +1,10 @@
-export declare class CreateProductImageDto {
-    url: string;
-    altText?: string;
-    isMain?: boolean;
-    sortOrder?: number;
-}
 export declare class CreateProductDto {
     name: string;
-    categoryName: string;
     discountedPrice: number;
     actualPrice: number;
-    stockCount: number;
     description?: string;
+    stockCount?: number;
     isStock?: boolean;
-    images?: CreateProductImageDto[];
+    isActive?: boolean;
+    categoryId: string;
 }

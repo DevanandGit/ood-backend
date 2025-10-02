@@ -29,33 +29,16 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly userService: UsersService,
-  ) {}
+  ) { }
 
-  @Post('login')
-  async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  @Post('send-otp')
+  async sendOtp(@Body() loginDto: LoginDto) {
+    return this.authService.sendOtp(loginDto);
   }
 
-  @Post('register')
-  async register(@Body() registerDto: RegisterDto) {
-    return this.authService.registeruser(registerDto);
-  }
-
-  //need to make it only accessbile by admin
-  @Post('register-admin')
-  async registerAdmin(@Body() registerDto: RegisterDto) {
-    return this.authService.registeradmin(registerDto);
-  }
-
-  @Post('otp/generate')
-  async generateOtp(@Body() emailDto: EmailDto) {
-    return this.authService.generateOtp(emailDto.email);
-  }
-
-  @Post('otp/verify')
+  @Post('verify-otp')
   async verifyOtp(@Body() otpVerifyDto: OtpVerifyDto) {
-    return this.authService.validateOtp(otpVerifyDto.email, otpVerifyDto.otp);
+    return this.authService.verifyOtp(otpVerifyDto.email, otpVerifyDto.otp);
   }
 
   @Get('profile')
@@ -76,36 +59,5 @@ export class AuthController {
     const userId = req.user.id;
     const role = req.user.role;
     return this.authService.getCustomerProfile(userId, role);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('profile')
-  @UseInterceptors(FileInterceptor('image'))
-  async createProfile(
-    @Request() req,
-    @Body() data: UpdateCustomerProfileDto,
-    @UploadedFile() image?: Express.Multer.File,
-  ) {
-    const userId = req.user.id;
-    return this.userService.createCustomerProfile(userId, data, image);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Patch('profile')
-  @UseInterceptors(FileInterceptor('image'))
-  async updateProfile(
-    @Request() req,
-    @Body() data: UpdateCustomerProfileDto,
-    @UploadedFile() image?: Express.Multer.File,
-  ) {
-    const userId = req.user.id;
-    return this.userService.updateCustomerProfile(userId, data, image);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Patch('change-password')
-  async changePassword(@Request() req, @Body() dto: ChangePasswordDto) {
-    const userId = req.user.id;
-    return this.userService.changePassword(userId, dto);
   }
 }

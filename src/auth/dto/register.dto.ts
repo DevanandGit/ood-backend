@@ -4,8 +4,8 @@ import {
   IsString,
   IsNotEmpty,
   IsOptional,
-  MinLength,
-  IsEnum,
+  IsDate,
+  IsBoolean,
 } from 'class-validator';
 
 export class RegisterDto {
@@ -14,7 +14,12 @@ export class RegisterDto {
   email: string;
 
   @IsString()
+  otp: string;
+
+  @IsDate()
+  otpExpiration: Date;
+
+  @IsBoolean()
   @IsOptional()
-  @MinLength(8)
-  password: string;
+  is_verified?: boolean;
 }

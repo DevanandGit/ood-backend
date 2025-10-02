@@ -18,7 +18,7 @@ exports.OrdersModule = OrdersModule = __decorate([
     (0, common_1.Module)({
         controllers: [orders_controller_1.OrdersController],
         providers: [orders_service_1.OrdersService, prisma_service_1.PrismaService],
-        exports: [orders_service_1.OrdersService]
+        exports: [orders_service_1.OrdersService],
     })
 ], OrdersModule);
 //# sourceMappingURL=orders.module.js.map

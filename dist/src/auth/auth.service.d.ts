@@ -1,126 +1,70 @@
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
+import { MailerService } from '@nestjs-modules/mailer';
 import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
 export declare class AuthService {
     private readonly prisma;
     private readonly usersService;
     private readonly jwtService;
-    constructor(prisma: PrismaService, usersService: UsersService, jwtService: JwtService);
-    validateUser(email: string, password: string): Promise<any>;
-    login(loginDto: LoginDto): Promise<{
-        access_token: string;
-        user: {
-            id: any;
-            name: any;
-            email: any;
-            role: any;
-        };
+    private readonly mailerService;
+    constructor(prisma: PrismaService, usersService: UsersService, jwtService: JwtService, mailerService: MailerService);
+    sendOtp(loginDto: LoginDto): Promise<{
+        message: string;
     }>;
-    registeruser(registerDto: RegisterDto): Promise<{
-        access_token: string;
+    verifyOtp(email: string, otp: string): Promise<{
         user: {
-            id: any;
-            name: any;
-            email: any;
-            role: any;
+            email: string;
+            id: string;
+            role: import(".prisma/client").$Enums.Roles;
+            otp: string | null;
+            expiresAt: Date | null;
+            is_verified: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+            lastLogin: Date | null;
         };
-    } | {
+        accessToken: string;
         message: string;
-        otp?: undefined;
-    } | {
-        message: string;
-        otp: string;
-    }>;
-    registeradmin(registerDto: RegisterDto): Promise<{
-        access_token: string;
-        user: {
-            id: any;
-            name: any;
-            email: any;
-            role: any;
-        };
-    } | {
-        message: string;
-        otp?: undefined;
-    } | {
-        message: string;
-        otp: string;
-    }>;
-    generateToken(user: any): Promise<{
-        access_token: string;
-        user: {
-            id: any;
-            name: any;
-            email: any;
-            role: any;
-        };
-    }>;
-    generateOtp(email: string): Promise<{
-        message: string;
-        otp?: undefined;
-    } | {
-        message: string;
-        otp: string;
-    }>;
-    validateOtp(email: string, otp: string): Promise<{
-        access_token: string;
-        user: {
-            id: any;
-            name: any;
-            email: any;
-            role: any;
-        };
+        status: number;
     }>;
     getAdminProfile(id: string, role: string): Promise<{
-        id: string;
         email: string;
+        id: string;
         role: import(".prisma/client").$Enums.Roles;
         createdAt: Date;
         updatedAt: Date;
         AdminProfile: {
-            name: string;
-            phone: string;
-            profilePicture: string;
             notes: string;
         };
     }>;
     getCustomerProfile(id: string, role: string): Promise<{
-        id: string;
         email: string;
+        id: string;
         role: import(".prisma/client").$Enums.Roles;
         createdAt: Date;
         updatedAt: Date;
         CustomerProfile: {
-            name: string;
-            phone: string;
-            address: string;
-            city: string;
-            state: string;
-            postalCode: string;
-            country: string;
-            profilePicture: string;
             addresses: {
-                id: string;
-                createdAt: Date;
-                updatedAt: Date;
-                name: string;
-                phone: string | null;
                 address: string;
+                name: string;
+                phone: string;
                 city: string;
                 state: string;
                 postalCode: string;
                 country: string;
-                customerProfileId: string | null;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                customerProfileId: string;
                 isDefault: boolean;
             }[];
             reviews: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                productId: string;
                 customerProfileId: string | null;
+                productId: string;
                 rating: number;
                 comment: string | null;
             }[];
@@ -135,6 +79,7 @@ export declare class AuthService {
                 createdAt: Date;
                 updatedAt: Date;
                 notes: string | null;
+                customerProfileId: string | null;
                 orderNumber: string;
                 status: import(".prisma/client").$Enums.OrderStatus;
                 paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
@@ -144,15 +89,28 @@ export declare class AuthService {
                 discountAmount: import("@prisma/client/runtime/library").Decimal;
                 shippingAddressId: string | null;
                 trackingID: string | null;
-                customerProfileId: string | null;
             }[];
             cart: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                productId: string;
                 customerProfileId: string | null;
+                productId: string;
                 quantity: number;
+            }[];
+            BankDetails: {
+                id: string;
+                customerProfileId: string | null;
+                accountNumber: string;
+                accountHolderName: string;
+                ifscCode: string;
+            }[];
+            Wishlist: {
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                customerProfileId: string;
+                productId: string;
             }[];
         };
     }>;

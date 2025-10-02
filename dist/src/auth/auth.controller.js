@@ -17,34 +17,18 @@ const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const login_dto_1 = require("./dto/login.dto");
 const otp_verify_dto_1 = require("./dto/otp-verify.dto");
-const email_dto_1 = require("./dto/email.dto");
-const register_dto_1 = require("./dto/register.dto");
 const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
 const roles_guard_1 = require("../common/guards/roles.guard");
 const roles_decorator_1 = require("../common/decorators/roles.decorator");
-const update_customer_profile_dto_1 = require("../users/dto/update-customer-profile.dto");
-const users_service_1 = require("../users/users.service");
-const change_password_dto_1 = require("../users/dto/change-password.dto");
-const platform_express_1 = require("@nestjs/platform-express");
 let AuthController = class AuthController {
-    constructor(authService, userService) {
+    constructor(authService) {
         this.authService = authService;
-        this.userService = userService;
     }
-    async login(loginDto) {
-        return this.authService.login(loginDto);
-    }
-    async register(registerDto) {
-        return this.authService.registeruser(registerDto);
-    }
-    async registerAdmin(registerDto) {
-        return this.authService.registeradmin(registerDto);
-    }
-    async generateOtp(emailDto) {
-        return this.authService.generateOtp(emailDto.email);
+    async sendOtp(loginDto) {
+        return this.authService.sendOtp(loginDto);
     }
     async verifyOtp(otpVerifyDto) {
-        return this.authService.validateOtp(otpVerifyDto.email, otpVerifyDto.otp);
+        return this.authService.verifyOtp(otpVerifyDto.email, otpVerifyDto.otp);
     }
     async getAdminProfile(req) {
         const userId = req.user.id;
@@ -57,50 +41,17 @@ let AuthController = class AuthController {
         const role = req.user.role;
         return this.authService.getCustomerProfile(userId, role);
     }
-    async createProfile(req, data, image) {
-        const userId = req.user.id;
-        return this.userService.createCustomerProfile(userId, data, image);
-    }
-    async updateProfile(req, data, image) {
-        const userId = req.user.id;
-        return this.userService.updateCustomerProfile(userId, data, image);
-    }
-    async changePassword(req, dto) {
-        const userId = req.user.id;
-        return this.userService.changePassword(userId, dto);
-    }
 };
 exports.AuthController = AuthController;
 __decorate([
-    (0, common_1.Post)('login'),
+    (0, common_1.Post)('send-otp'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [login_dto_1.LoginDto]),
     __metadata("design:returntype", Promise)
-], AuthController.prototype, "login", null);
+], AuthController.prototype, "sendOtp", null);
 __decorate([
-    (0, common_1.Post)('register'),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [register_dto_1.RegisterDto]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "register", null);
-__decorate([
-    (0, common_1.Post)('register-admin'),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [register_dto_1.RegisterDto]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "registerAdmin", null);
-__decorate([
-    (0, common_1.Post)('otp/generate'),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [email_dto_1.EmailDto]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "generateOtp", null);
-__decorate([
-    (0, common_1.Post)('otp/verify'),
+    (0, common_1.Post)('verify-otp'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [otp_verify_dto_1.OtpVerifyDto]),
@@ -109,7 +60,7 @@ __decorate([
 __decorate([
     (0, common_1.Get)('profile'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)("ADMIN"),
+    (0, roles_decorator_1.Roles)('ADMIN'),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -118,45 +69,14 @@ __decorate([
 __decorate([
     (0, common_1.Get)('customer/profile'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)("CUSTOMER", "ADMIN"),
+    (0, roles_decorator_1.Roles)('CUSTOMER', 'ADMIN'),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "getCustomerProfile", null);
-__decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Post)('profile'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.UploadedFile)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, update_customer_profile_dto_1.UpdateCustomerProfileDto, Object]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "createProfile", null);
-__decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Patch)('profile'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.UploadedFile)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, update_customer_profile_dto_1.UpdateCustomerProfileDto, Object]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "updateProfile", null);
-__decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Patch)('change-password'),
-    __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, change_password_dto_1.ChangePasswordDto]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "changePassword", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
-    __metadata("design:paramtypes", [auth_service_1.AuthService, users_service_1.UsersService])
+    __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map

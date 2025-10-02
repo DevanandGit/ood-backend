@@ -2,10 +2,12 @@
 CREATE TABLE `users` (
     `id` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
-    `role` ENUM('SUPER_ADMIN', 'ADMIN', 'STORE_MANAGER', 'PRODUCT_MANAGER', 'ORDER_MANAGER', 'INVENTORY_MANAGER', 'CUSTOMER_SUPPORT', 'MARKETING_MANAGER', 'DELIVERY', 'CUSTOMER') NOT NULL DEFAULT 'CUSTOMER',
+    `role` ENUM('ADMIN', 'CUSTOMER') NOT NULL DEFAULT 'CUSTOMER',
+    `otp` VARCHAR(191) NULL,
+    `expiresAt` DATETIME(3) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
-    `password` VARCHAR(191) NULL,
+    `lastLogin` DATETIME(3) NULL,
 
     UNIQUE INDEX `users_email_key`(`email`),
     PRIMARY KEY (`id`)
@@ -14,14 +16,6 @@ CREATE TABLE `users` (
 -- CreateTable
 CREATE TABLE `CustomerProfile` (
     `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
-    `phone` VARCHAR(191) NULL,
-    `address` VARCHAR(191) NOT NULL,
-    `city` VARCHAR(191) NOT NULL,
-    `state` VARCHAR(191) NOT NULL,
-    `postalCode` VARCHAR(191) NOT NULL,
-    `country` VARCHAR(191) NOT NULL,
-    `profile_picture` VARCHAR(191) NULL,
     `userId` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `CustomerProfile_userId_key`(`userId`),
@@ -31,9 +25,6 @@ CREATE TABLE `CustomerProfile` (
 -- CreateTable
 CREATE TABLE `AdminProfile` (
     `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
-    `phone` VARCHAR(191) NULL,
-    `profile_picture` VARCHAR(191) NULL,
     `userId` VARCHAR(191) NOT NULL,
     `notes` VARCHAR(191) NULL,
 
@@ -42,16 +33,16 @@ CREATE TABLE `AdminProfile` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `UserOtp` (
+CREATE TABLE `categories` (
     `id` VARCHAR(191) NOT NULL,
-    `otp` VARCHAR(191) NOT NULL,
-    `expiresAt` DATETIME(3) NOT NULL,
-    `used` BOOLEAN NOT NULL DEFAULT false,
+    `name` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `image` VARCHAR(191) NULL,
+    `parentId` VARCHAR(191) NULL,
+    `isActive` BOOLEAN NOT NULL DEFAULT true,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `userId` VARCHAR(191) NOT NULL,
+    `updatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `UserOtp_userId_key`(`userId`),
-    INDEX `UserOtp_userId_idx`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -59,14 +50,15 @@ CREATE TABLE `UserOtp` (
 CREATE TABLE `products` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
-    `categoryName` VARCHAR(191) NOT NULL,
     `discountedPrice` DECIMAL(10, 2) NOT NULL,
     `actualPrice` DECIMAL(10, 2) NOT NULL,
     `description` VARCHAR(191) NULL,
     `stockCount` INTEGER NOT NULL DEFAULT 0,
     `isStock` BOOLEAN NOT NULL DEFAULT true,
+    `isActive` BOOLEAN NOT NULL DEFAULT true,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `categoryId` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -147,14 +139,14 @@ CREATE TABLE `payments` (
 -- CreateTable
 CREATE TABLE `addresses` (
     `id` VARCHAR(191) NOT NULL,
-    `customerProfileId` VARCHAR(191) NULL,
+    `customerProfileId` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NOT NULL,
     `city` VARCHAR(191) NOT NULL,
     `state` VARCHAR(191) NOT NULL,
     `postalCode` VARCHAR(191) NOT NULL,
     `country` VARCHAR(191) NOT NULL,
-    `phone` VARCHAR(191) NULL,
+    `phone` VARCHAR(191) NOT NULL,
     `isDefault` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -227,6 +219,14 @@ CREATE TABLE `wishlist` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `NotifyMe` (
+    `id` VARCHAR(191) NOT NULL,
+    `productId` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `CustomerProfile` ADD CONSTRAINT `CustomerProfile_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -234,7 +234,10 @@ ALTER TABLE `CustomerProfile` ADD CONSTRAINT `CustomerProfile_userId_fkey` FOREI
 ALTER TABLE `AdminProfile` ADD CONSTRAINT `AdminProfile_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `UserOtp` ADD CONSTRAINT `UserOtp_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `categories` ADD CONSTRAINT `categories_parentId_fkey` FOREIGN KEY (`parentId`) REFERENCES `categories`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `products` ADD CONSTRAINT `products_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `categories`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `product_images` ADD CONSTRAINT `product_images_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `products`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -283,3 +286,6 @@ ALTER TABLE `wishlist` ADD CONSTRAINT `wishlist_productId_fkey` FOREIGN KEY (`pr
 
 -- AddForeignKey
 ALTER TABLE `wishlist` ADD CONSTRAINT `wishlist_customerProfileId_fkey` FOREIGN KEY (`customerProfileId`) REFERENCES `CustomerProfile`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `NotifyMe` ADD CONSTRAINT `NotifyMe_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `products`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

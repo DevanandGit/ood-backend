@@ -17,14 +17,25 @@ let AddressService = class AddressService {
         this.prisma = prisma;
     }
     async create(createAddressDto, profile_id) {
+        const { name, address, city, state, postalCode, country, phone, isDefault } = createAddressDto;
         const profile = await this.prisma.customerProfile.findUnique({
-            where: { id: profile_id },
+            where: { userId: profile_id },
         });
         if (!profile) {
-            throw new common_1.NotFoundException("CustomerProfile Not Found");
+            throw new common_1.NotFoundException('CustomerProfile Not Found');
         }
         return this.prisma.address.create({
-            data: { ...createAddressDto, customerProfileId: profile_id }
+            data: {
+                name,
+                address,
+                city,
+                state,
+                postalCode,
+                country,
+                phone,
+                isDefault,
+                customerProfileId: profile.id,
+            },
         });
     }
     async findAll(profile_id) {
@@ -35,8 +46,9 @@ let AddressService = class AddressService {
     }
     async findOne(profile_id, id) {
         const address = await this.prisma.address.findUnique({ where: { id } });
-        if (!address)
+        if (!address) {
             throw new common_1.NotFoundException(`Address with id ${id} not found`);
+        }
         if (address.customerProfileId !== profile_id) {
             throw new common_1.ForbiddenException('You are not allowed to access this address');
         }
@@ -51,9 +63,7 @@ let AddressService = class AddressService {
     }
     async remove(profile_id, id) {
         await this.findOne(profile_id, id);
-        return this.prisma.address.delete({
-            where: { id },
-        });
+        return this.prisma.address.delete({ where: { id } });
     }
 };
 exports.AddressService = AddressService;

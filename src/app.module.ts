@@ -6,12 +6,19 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ResponseModule } from './response/response.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ProductsModule } from './products/products.module';
+import { ProductModule } from './products/products.module';
 import { CartModule } from './cart/cart.module';
 import { RazorpayModule } from './razorpay/razorpay.module';
 import { CouponModule } from './coupouns/coupouns.module';
 import { NotificationsModule } from './firebase/notifications.module';
 import { WishlistModule } from './wishlist/wishlist.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { join } from 'path';
+import { CategoryModule } from './categories/categories.module';
+import { RazorpayService } from './razorpay/razorpay.service';
+import { RazorpayController } from './razorpay/razorpay.controller';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -24,13 +31,42 @@ import { WishlistModule } from './wishlist/wishlist.module';
     UsersModule,
     ResponseModule,
     ScheduleModule.forRoot(),
-    ProductsModule,
+    ProductModule,
     CartModule,
+    CategoryModule,
     CouponModule,
     NotificationsModule,
     WishlistModule,
+    OrdersModule,
 
-    RazorpayModule.forRootAsync(),
+
+    RazorpayModule.forRoot({
+      key_id: process.env.RAZORPAY_KEY_ID, // Use environment variables for keys
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',       // your SMTP host
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASS,
+        },
+      },
+      defaults: {
+        from: '"No Reply" <no-wishyougrowth@gmail.com>',
+      },
+      template: {
+        dir: join(process.cwd(), 'src/templates'), // ✅ absolute path
+        adapter: new PugAdapter(),
+        options: {
+          strict: true,
+        },
+      }
+    }),
   ],
+  providers: [RazorpayService],
+  controllers: [RazorpayController],
 })
-export class AppModule {}
+export class AppModule { }

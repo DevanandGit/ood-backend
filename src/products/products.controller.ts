@@ -1,61 +1,83 @@
+// src/product/product.controller.ts
 import {
   Controller,
   Get,
   Post,
   Body,
   Param,
-  Patch,
   Delete,
-  UseGuards,
+  Patch,
+  UploadedFiles,
+  UseInterceptors,
   Query,
 } from '@nestjs/common';
-import { ProductsService } from './products.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { ProductService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
-import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
-import { PaginationDto } from 'src/pagination/dto/pagination.dto';
-import { RolesGuard } from 'src/common/guards/roles.guard';
-import { Roles } from 'src/common/decorators/roles.decorator';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { SearchFilterDto } from 'src/pagination/dto/search-filter.dto';
+import { extname } from 'path';
+import { ProductQueryDto } from './dto/ product-query.dto';
 
 @Controller('products')
-export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+export class ProductController {
+  constructor(private readonly productService: ProductService) { }
 
-  // 🔹 Create product with images
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
   @Post()
-  @UseGuards(JwtAuthGuard)
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  @UseInterceptors(
+    FilesInterceptor('images', 10, {
+      storage: diskStorage({
+        destination: './uploads/products',
+        filename: (req, file, cb) => {
+          const randomName = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, randomName + extname(file.originalname));
+        },
+      }),
+    }),
+  )
+  async create(
+    @Body() createProductDto: CreateProductDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    const imagePaths = files.map((file) => `/uploads/products/${file.filename}`);
+    return this.productService.create(createProductDto, imagePaths);
   }
 
+  // product.controller.ts
   @Get()
-  findAll(@Query() query: SearchFilterDto) {
-    return this.productsService.findAll(query);
+  async findAll(@Query() query: ProductQueryDto) {
+    return this.productService.findAll(query);
   }
 
-  // 🔹 Get single product
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productsService.findOne(id);
+    return this.productService.findOne(id);
   }
 
-  // 🔹 Update product (with images)
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(id, updateProductDto);
+  @UseInterceptors(
+    FilesInterceptor('images', 10, {
+      storage: diskStorage({
+        destination: './uploads/products',
+        filename: (req, file, cb) => {
+          const randomName = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, randomName + extname(file.originalname));
+        },
+      }),
+    }),
+  )
+  async update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    const imagePaths = files ? files.map((file) => `/uploads/products/${file.filename}`) : [];
+    return this.productService.update(id, updateProductDto, imagePaths);
   }
 
-  // 🔹 Delete product
-  // 🔹 Update product (with images)
-  @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.productsService.remove(id);
+    return this.productService.remove(id);
   }
 }

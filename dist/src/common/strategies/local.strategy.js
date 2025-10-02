@@ -19,13 +19,6 @@ let LocalStrategy = class LocalStrategy extends (0, passport_1.PassportStrategy)
         super({ usernameField: 'email' });
         this.authService = authService;
     }
-    async validate(email, password) {
-        const user = await this.authService.validateUser(email, password);
-        if (!user) {
-            throw new common_1.UnauthorizedException('Invalid credentials');
-        }
-        return user;
-    }
 };
 exports.LocalStrategy = LocalStrategy;
 exports.LocalStrategy = LocalStrategy = __decorate([

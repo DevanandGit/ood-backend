@@ -23,7 +23,7 @@ let AddressController = class AddressController {
         this.addressService = addressService;
     }
     create(createAddressDto, req) {
-        const profile_id = req.user.customerProfile.id;
+        const profile_id = req.user.id;
         return this.addressService.create(createAddressDto, profile_id);
     }
     findAll(req) {

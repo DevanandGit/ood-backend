@@ -27,7 +27,7 @@ let CouponService = class CouponService {
         const coupons = await this.prisma.coupon.findMany({
             orderBy: { createdAt: 'desc' },
         });
-        return coupons.filter(coupon => {
+        return coupons.filter((coupon) => {
             const validFrom = new Date(coupon.validFrom);
             const validTo = new Date(coupon.ValidTill);
             return validFrom <= now && validTo >= now;

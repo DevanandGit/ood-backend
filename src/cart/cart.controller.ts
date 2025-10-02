@@ -18,10 +18,10 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 @Controller('cart')
 @UseGuards(JwtAuthGuard)
 export class CartController {
-  constructor(private readonly cartService: CartService) {}
+  constructor(private readonly cartService: CartService) { }
 
   @UseGuards(JwtAuthGuard)
-  @Post('add')
+  @Post()
   async addToCart(@Request() req, @Body() addToCartDto: AddToCartDto) {
     const profile_id = req.user.id; // Assuming JWT auth stores user in req.user
     return this.cartService.addToCart(profile_id, addToCartDto);

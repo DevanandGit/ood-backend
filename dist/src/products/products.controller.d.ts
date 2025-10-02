@@ -1,104 +1,135 @@
-import { ProductsService } from './products.service';
+import { ProductService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { SearchFilterDto } from 'src/pagination/dto/search-filter.dto';
-export declare class ProductsController {
-    private readonly productsService;
-    constructor(productsService: ProductsService);
-    create(createProductDto: CreateProductDto): Promise<{
+import { ProductQueryDto } from './dto/ product-query.dto';
+export declare class ProductController {
+    private readonly productService;
+    constructor(productService: ProductService);
+    create(createProductDto: CreateProductDto, files: Express.Multer.File[]): Promise<{
         images: {
             id: string;
+            productId: string;
             url: string;
             altText: string | null;
             isMain: boolean;
             sortOrder: number;
-            productId: string;
         }[];
     } & {
+        name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        categoryName: string;
         discountedPrice: import("@prisma/client/runtime/library").Decimal;
         actualPrice: import("@prisma/client/runtime/library").Decimal;
         description: string | null;
         stockCount: number;
         isStock: boolean;
+        isActive: boolean;
+        categoryId: string;
     }>;
-    findAll(query: SearchFilterDto): Promise<import("../pagination/pagination-response.dto").PaginationResponseDto<{
-        images: {
+    findAll(query: ProductQueryDto): Promise<{
+        data: ({
+            category: {
+                name: string;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                description: string | null;
+                isActive: boolean;
+                image: string | null;
+                parentId: string | null;
+            };
+            images: {
+                id: string;
+                productId: string;
+                url: string;
+                altText: string | null;
+                isMain: boolean;
+                sortOrder: number;
+            }[];
+        } & {
+            name: string;
             id: string;
-            url: string;
-            altText: string | null;
-            isMain: boolean;
-            sortOrder: number;
-            productId: string;
-        }[];
-    } & {
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        name: string;
-        categoryName: string;
-        discountedPrice: import("@prisma/client/runtime/library").Decimal;
-        actualPrice: import("@prisma/client/runtime/library").Decimal;
-        description: string | null;
-        stockCount: number;
-        isStock: boolean;
-    }>>;
+            createdAt: Date;
+            updatedAt: Date;
+            discountedPrice: import("@prisma/client/runtime/library").Decimal;
+            actualPrice: import("@prisma/client/runtime/library").Decimal;
+            description: string | null;
+            stockCount: number;
+            isStock: boolean;
+            isActive: boolean;
+            categoryId: string;
+        })[];
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }>;
     findOne(id: string): Promise<{
+        category: {
+            name: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            description: string | null;
+            isActive: boolean;
+            image: string | null;
+            parentId: string | null;
+        };
         images: {
             id: string;
+            productId: string;
             url: string;
             altText: string | null;
             isMain: boolean;
             sortOrder: number;
-            productId: string;
         }[];
     } & {
+        name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        categoryName: string;
         discountedPrice: import("@prisma/client/runtime/library").Decimal;
         actualPrice: import("@prisma/client/runtime/library").Decimal;
         description: string | null;
         stockCount: number;
         isStock: boolean;
+        isActive: boolean;
+        categoryId: string;
     }>;
-    update(id: string, updateProductDto: UpdateProductDto): Promise<{
+    update(id: string, updateProductDto: UpdateProductDto, files: Express.Multer.File[]): Promise<{
         images: {
             id: string;
+            productId: string;
             url: string;
             altText: string | null;
             isMain: boolean;
             sortOrder: number;
-            productId: string;
         }[];
     } & {
+        name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        categoryName: string;
         discountedPrice: import("@prisma/client/runtime/library").Decimal;
         actualPrice: import("@prisma/client/runtime/library").Decimal;
         description: string | null;
         stockCount: number;
         isStock: boolean;
+        isActive: boolean;
+        categoryId: string;
     }>;
     remove(id: string): Promise<{
+        name: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
-        categoryName: string;
         discountedPrice: import("@prisma/client/runtime/library").Decimal;
         actualPrice: import("@prisma/client/runtime/library").Decimal;
         description: string | null;
         stockCount: number;
         isStock: boolean;
+        isActive: boolean;
+        categoryId: string;
     }>;
 }

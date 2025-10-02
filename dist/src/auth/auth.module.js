@@ -17,6 +17,7 @@ const users_module_1 = require("../users/users.module");
 const jwt_strategy_1 = require("../common/strategies/jwt.strategy");
 const local_strategy_1 = require("../common/strategies/local.strategy");
 const prisma_module_1 = require("../prisma/prisma.module");
+const mailer_1 = require("@nestjs-modules/mailer");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -25,6 +26,7 @@ exports.AuthModule = AuthModule = __decorate([
         imports: [
             prisma_module_1.PrismaModule,
             users_module_1.UsersModule,
+            mailer_1.MailerModule,
             passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
             jwt_1.JwtModule.registerAsync({
                 imports: [config_1.ConfigModule],

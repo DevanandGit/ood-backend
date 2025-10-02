@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  nest-app:
+    build:
+      context: .
+      target: development # switch to 'production' for prod
+    container_name: nest-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      DATABASE_URL: "mysql://luvwishuser:Luvwish123!@localhost:3306/luvwish"
+      JWT_SECRET: "your-secret-key"
+    depends_on:
+      - mysql-db
+
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

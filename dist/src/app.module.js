@@ -20,6 +20,13 @@ const razorpay_module_1 = require("./razorpay/razorpay.module");
 const coupouns_module_1 = require("./coupouns/coupouns.module");
 const notifications_module_1 = require("./firebase/notifications.module");
 const wishlist_module_1 = require("./wishlist/wishlist.module");
+const mailer_1 = require("@nestjs-modules/mailer");
+const pug_adapter_1 = require("@nestjs-modules/mailer/dist/adapters/pug.adapter");
+const path_1 = require("path");
+const categories_module_1 = require("./categories/categories.module");
+const razorpay_service_1 = require("./razorpay/razorpay.service");
+const razorpay_controller_1 = require("./razorpay/razorpay.controller");
+const orders_module_1 = require("./orders/orders.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -35,13 +42,41 @@ exports.AppModule = AppModule = __decorate([
             users_module_1.UsersModule,
             response_module_1.ResponseModule,
             schedule_1.ScheduleModule.forRoot(),
-            products_module_1.ProductsModule,
+            products_module_1.ProductModule,
             cart_module_1.CartModule,
+            categories_module_1.CategoryModule,
             coupouns_module_1.CouponModule,
             notifications_module_1.NotificationsModule,
             wishlist_module_1.WishlistModule,
-            razorpay_module_1.RazorpayModule.forRootAsync()
+            orders_module_1.OrdersModule,
+            razorpay_module_1.RazorpayModule.forRoot({
+                key_id: process.env.RAZORPAY_KEY_ID,
+                key_secret: process.env.RAZORPAY_KEY_SECRET,
+            }),
+            mailer_1.MailerModule.forRoot({
+                transport: {
+                    host: 'smtp.gmail.com',
+                    port: 587,
+                    secure: false,
+                    auth: {
+                        user: process.env.MAIL_USER,
+                        pass: process.env.MAIL_PASS,
+                    },
+                },
+                defaults: {
+                    from: '"No Reply" <no-wishyougrowth@gmail.com>',
+                },
+                template: {
+                    dir: (0, path_1.join)(process.cwd(), 'src/templates'),
+                    adapter: new pug_adapter_1.PugAdapter(),
+                    options: {
+                        strict: true,
+                    },
+                }
+            }),
         ],
+        providers: [razorpay_service_1.RazorpayService],
+        controllers: [razorpay_controller_1.RazorpayController],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

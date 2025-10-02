@@ -47,7 +47,7 @@ let OrdersService = class OrdersService {
                 },
                 orderBy: { createdAt: 'desc' },
             }),
-            this.prisma.order.count()
+            this.prisma.order.count(),
         ]);
         return new pagination_response_dto_1.PaginationResponseDto(data, total, pagination.page, pagination.limit);
     }
@@ -116,7 +116,9 @@ let OrdersService = class OrdersService {
         });
     }
     async updateTrackingDetails(orderId, trackingDetails) {
-        const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+        const order = await this.prisma.order.findUnique({
+            where: { id: orderId },
+        });
         if (!order)
             throw new common_1.NotFoundException(`Order with id ${orderId} not found`);
         return this.prisma.order.update({

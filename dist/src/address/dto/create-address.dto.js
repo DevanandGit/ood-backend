@@ -17,10 +17,6 @@ exports.CreateAddressDto = CreateAddressDto;
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateAddressDto.prototype, "customerProfileId", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
 ], CreateAddressDto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
@@ -43,12 +39,10 @@ __decorate([
     __metadata("design:type", String)
 ], CreateAddressDto.prototype, "country", void 0);
 __decorate([
-    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateAddressDto.prototype, "phone", void 0);
 __decorate([
-    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], CreateAddressDto.prototype, "isDefault", void 0);

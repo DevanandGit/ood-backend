@@ -9,17 +9,28 @@ import { UpdateAddressDto } from './dto/update-address.dto';
 
 @Injectable()
 export class AddressService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createAddressDto: CreateAddressDto, profile_id: string) {
+    const { name, address, city, state, postalCode, country, phone, isDefault } = createAddressDto;
     const profile = await this.prisma.customerProfile.findUnique({
-      where: { id: profile_id },
+      where: { userId: profile_id },
     });
     if (!profile) {
       throw new NotFoundException('CustomerProfile Not Found');
     }
     return this.prisma.address.create({
-      data: { ...createAddressDto, customerProfileId: profile_id },
+      data: {
+        name,
+        address,
+        city,
+        state,
+        postalCode,
+        country,
+        phone,
+        isDefault,
+        customerProfileId: profile.id,
+      },
     });
   }
 
@@ -32,13 +43,17 @@ export class AddressService {
 
   async findOne(profile_id: string, id: string) {
     const address = await this.prisma.address.findUnique({ where: { id } });
-    if (!address)
+
+    if (!address) {
       throw new NotFoundException(`Address with id ${id} not found`);
+    }
+
     if (address.customerProfileId !== profile_id) {
       throw new ForbiddenException(
         'You are not allowed to access this address',
       );
     }
+
     return address;
   }
 
@@ -52,8 +67,6 @@ export class AddressService {
 
   async remove(profile_id: string, id: string) {
     await this.findOne(profile_id, id); // ensure belongs to profile
-    return this.prisma.address.delete({
-      where: { id },
-    });
+    return this.prisma.address.delete({ where: { id } });
   }
 }

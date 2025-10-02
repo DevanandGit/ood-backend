@@ -8,11 +8,13 @@ import { UsersModule } from '../users/users.module';
 import { JwtStrategy } from '../common/strategies/jwt.strategy';
 import { LocalStrategy } from '../common/strategies/local.strategy';
 import { PrismaModule } from '../prisma/prisma.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
     PrismaModule,
     UsersModule,
+    MailerModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -29,4 +31,4 @@ import { PrismaModule } from '../prisma/prisma.module';
   providers: [AuthService, JwtStrategy, LocalStrategy],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }

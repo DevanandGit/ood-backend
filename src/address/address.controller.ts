@@ -16,12 +16,12 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
 @Controller('addresses')
 export class AddressController {
-  constructor(private readonly addressService: AddressService) {}
+  constructor(private readonly addressService: AddressService) { }
 
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createAddressDto: CreateAddressDto, @Request() req) {
-    const profile_id = req.user.customerProfile.id;
+    const profile_id = req.user.id
 
     return this.addressService.create(createAddressDto, profile_id);
   }

@@ -1,112 +1,129 @@
+// src/product/product.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
-import { PaginationDto } from 'src/pagination/dto/pagination.dto';
-import { PaginationResponseDto } from 'src/pagination/pagination-response.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { SearchFilterDto } from 'src/pagination/dto/search-filter.dto';
+import { ProductQueryDto } from './dto/ product-query.dto';
 
 @Injectable()
-export class ProductsService {
-  constructor(private readonly prisma: PrismaService) {}
+export class ProductService {
+  constructor(private prisma: PrismaService) { }
 
-  // 🔹 Create product with multiple images
-  async create(createProductDto: CreateProductDto) {
-    const { images, ...productData } = createProductDto;
-
+  async create(dto: CreateProductDto, imagePaths: string[]) {
     return this.prisma.product.create({
       data: {
-        ...productData,
-        images: images?.length
-          ? {
-              create: images.map((img) => ({
-                url: img.url,
-                altText: img.altText,
-                isMain: img.isMain ?? false,
-                sortOrder: img.sortOrder ?? 0,
-              })),
-            }
-          : undefined,
+        name: dto.name,
+        discountedPrice: dto.discountedPrice,
+        actualPrice: dto.actualPrice,
+        description: dto.description,
+        stockCount: dto.stockCount ?? 0,
+        isStock: dto.isStock ?? true,
+        isActive: dto.isActive ?? true,
+        categoryId: dto.categoryId,
+        images: {
+          create: imagePaths.map((url, idx) => ({
+            url,
+            sortOrder: idx,
+            isMain: idx === 0, // first one is main
+          })),
+        },
       },
       include: { images: true },
     });
   }
 
-  async findAll(query: SearchFilterDto) {
-    const { search, category, minPrice, maxPrice, skip, limit, page } = query;
+  // product.service.ts
+  async findAll(query: ProductQueryDto) {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-    // common where condition
-    const where = {
-      AND: [
-        search
-          ? {
-              OR: [
-                { name: { contains: search, mode: 'insensitive' } },
-                { description: { contains: search, mode: 'insensitive' } },
-              ],
-            }
-          : {},
-        category ? { category: category } : {},
-        minPrice ? { price: { gte: +minPrice } } : {},
-        maxPrice ? { price: { lte: +maxPrice } } : {},
-      ],
-    };
+    const where: any = {};
 
-    const [data, total] = await this.prisma.$transaction([
+    // 🔎 Search by name or description
+    if (query.search) {
+      where.OR = [
+        { name: { contains: query.search, mode: 'insensitive' } },
+        { description: { contains: query.search, mode: 'insensitive' } },
+      ];
+    }
+
+    // 🗂 Filter by categoryId
+    if (query.categoryId) {
+      where.categoryId = query.categoryId;
+    }
+
+    // ✅ Filter by active status
+    if (query.isActive !== undefined) {
+      where.isActive = query.isActive === 'true';
+    }
+
+    // ✅ Filter by stock status
+    if (query.isStock !== undefined) {
+      where.isStock = query.isStock === 'true';
+    }
+
+    // 📝 Execute the query
+    const [products, total] = await this.prisma.$transaction([
       this.prisma.product.findMany({
-        where,
-        include: { images: true },
-        orderBy: { createdAt: 'desc' },
         skip,
         take: limit,
+        where,
+        include: {
+          images: true,
+          category: true,
+        },
+        orderBy: { createdAt: 'desc' },
       }),
       this.prisma.product.count({ where }),
     ]);
 
-    return new PaginationResponseDto(data, total, page, limit);
+    return {
+      data: products,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
-  // 🔹 Get product by ID
+
   async findOne(id: string) {
     const product = await this.prisma.product.findUnique({
       where: { id },
-      include: { images: true },
+      include: { images: true, category: true },
     });
-
-    if (!product)
-      throw new NotFoundException(`Product with ID ${id} not found`);
+    if (!product) throw new NotFoundException('Product not found');
     return product;
   }
 
-  // 🔹 Update product (including images)
-  async update(id: string, updateProductDto: UpdateProductDto) {
-    const { images, ...productData } = updateProductDto;
+  async update(id: string, dto: UpdateProductDto, imagePaths?: string[]) {
+    const existing = await this.findOne(id);
+
+    // Optionally create new images
+    let imageData: any = undefined;
+    if (imagePaths && imagePaths.length > 0) {
+      imageData = {
+        create: imagePaths.map((url, idx) => ({
+          url,
+          sortOrder: existing.images.length + idx,
+          isMain: false,
+        })),
+      };
+    }
 
     return this.prisma.product.update({
       where: { id },
       data: {
-        ...productData,
-        ...(images
-          ? {
-              images: {
-                deleteMany: {}, // remove old images
-                create: images.map((img) => ({
-                  url: img.url,
-                  altText: img.altText,
-                  isMain: img.isMain ?? false,
-                  sortOrder: img.sortOrder ?? 0,
-                })),
-              },
-            }
-          : {}),
+        ...dto,
+        images: imageData,
       },
       include: { images: true },
     });
   }
 
-  // 🔹 Delete product
   async remove(id: string) {
-    await this.findOne(id); // ensure product exists
+    await this.findOne(id);
     return this.prisma.product.delete({ where: { id } });
   }
 }

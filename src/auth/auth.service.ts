@@ -1,18 +1,17 @@
 import {
   Injectable,
   UnauthorizedException,
-  ConflictException,
-  NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
-import * as bcrypt from 'bcrypt';
 import { Roles } from '@prisma/client';
-import { error } from 'console';
+import { generate6DigitOtp } from 'src/common/utility/utils';
+import { MailerService } from '@nestjs-modules/mailer';
+import { LoginDto } from './dto/login.dto';
+import { r } from '@faker-js/faker/dist/airline-CHFQMWko';
+import { stat } from 'fs';
 
 @Injectable()
 export class AuthService {
@@ -20,127 +19,75 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-  ) {}
+    private readonly mailerService: MailerService,
+  ) { }
 
-  async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
-    if (!user) return null;
-    if (!user.password) {
-      throw new UnauthorizedException('Invalid login method');
-    }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) return null;
-    const { password: _, ...result } = user;
-    return result;
-  }
-
-  async login(loginDto: LoginDto) {
-    const user = await this.validateUser(loginDto.email, loginDto.password);
-    if (!user) throw new UnauthorizedException('Invalid credentials');
-    return this.generateToken(user);
-  }
-
-  async registeruser(registerDto: RegisterDto) {
-    const { email } = registerDto;
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email },
-    });
-    if (existingUser) {
-      throw new ConflictException('Email already in use');
-    }
-    const user = await this.usersService.createCustomer({ ...registerDto });
-    if (registerDto.password) {
-      return this.generateToken(user);
-    } else {
-      return await this.generateOtp(email);
-    }
-  }
-
-  async registeradmin(registerDto: RegisterDto) {
-    const { email } = registerDto;
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email },
-    });
-    if (existingUser) {
-      throw new ConflictException('Email already in use');
-    }
-    const user = await this.usersService.createAdmin({ ...registerDto });
-    if (registerDto.password) {
-      return this.generateToken(user);
-    } else {
-      return await this.generateOtp(email);
-    }
-  }
-
-  async generateToken(user: any) {
-    const payload = {
-      email: user.email,
-      sub: user.id,
-      role: user.role,
-    };
-
-    return {
-      access_token: this.jwtService.sign(payload),
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    };
-  }
-
-  async generateOtp(email: string) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-
+  async sendOtp(loginDto: LoginDto) {
+    const otp = generate6DigitOtp();
+    let user = await this.prisma.user.findUnique({ where: { email: loginDto.email } });
     if (!user) {
-      return { message: 'Not a registered user' };
+      await this.prisma.user.create({
+        data: {
+          email: loginDto.email,
+          otp: otp,
+          expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes from now
+          role: Roles.CUSTOMER,
+          is_verified: false,
+        }
+      });
     }
-
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiry = new Date();
-    expiry.setMinutes(expiry.getMinutes() + 15);
-
-    await this.prisma.userOtp.upsert({
-      where: { userId: user.id },
-      update: { otp, expiresAt: expiry },
-      create: {
-        userId: user.id,
-        otp,
-        expiresAt: expiry,
+    else {
+      user = await this.prisma.user.update({
+        where: { email: loginDto.email },
+        data: {
+          otp: otp,
+          expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes from now
+        }
+      });
+    }
+    await this.mailerService.sendMail({
+      to: loginDto.email,
+      subject: 'Login OTP',
+      template: 'authentication', // ✅ refers to authentication.pug
+      context: {
+        otp, // ✅ available inside the template
       },
     });
-
-    if (process.env.NODE_ENV !== 'production') {
-      return {
-        message: 'OTP generated (development mode)',
-        otp,
-      };
-    }
-
-    return { message: 'OTP sent to your email' };
+    return { message: 'OTP sent successfully' };
   }
 
-  async validateOtp(email: string, otp: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
-    if (!user) throw new UnauthorizedException('Invalid credentials');
-    const userOtp = await this.prisma.userOtp.findUnique({
-      where: { userId: user.id },
-    });
-    if (!userOtp || userOtp.otp !== otp) {
-      throw new UnauthorizedException('Invalid OTP');
+
+  async verifyOtp(email: string, otp: string) {
+    let user = await this.prisma.user.findUnique({ where: { email } });
+    console.log(user);
+    console.log(otp);
+    console.log(user.otp)
+    if (user.otp == otp && user.expiresAt > new Date()) {
+      if (!user.is_verified) {
+        user = await this.prisma.user.update({
+          where: { email },
+          data: { is_verified: true },
+        });
+
+        return {
+          user,
+          accessToken: this.jwtService.sign({ sub: user.id, email: user.email }),
+          message: 'User registered successfully',
+          status: 201,
+        };
+      }
+      else {
+        return {
+          user,
+          accessToken: this.jwtService.sign({ sub: user.id, email: user.email }),
+          message: 'User registered successfully',
+          status: 201,
+        }
+      }
+    } else {
+      throw new UnauthorizedException('Invalid OTP or OTP has expired');
     }
-    if (new Date() > userOtp.expiresAt) {
-      throw new UnauthorizedException('OTP has expired');
-    }
-    // Clear OTP after validation
-    await this.prisma.userOtp.delete({ where: { userId: user.id } });
-    return this.generateToken(user);
-  }
+  };
 
   async getAdminProfile(id: string, role: string) {
     if (role !== Roles.ADMIN) {
@@ -150,9 +97,9 @@ export class AuthService {
   }
 
   async getCustomerProfile(id: string, role: string) {
-    if (role === Roles.DELIVERY) {
+    if (role === Roles.CUSTOMER) {
       throw new ForbiddenException('Profile cannot be accessed');
     }
-    return this.usersService.CutomerProfile(id);
+    return this.usersService.CustomerProfile(id);
   }
 }

@@ -21,8 +21,15 @@ __decorate([
 ], RegisterDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.MinLength)(8),
     __metadata("design:type", String)
-], RegisterDto.prototype, "password", void 0);
+], RegisterDto.prototype, "otp", void 0);
+__decorate([
+    (0, class_validator_1.IsDate)(),
+    __metadata("design:type", Date)
+], RegisterDto.prototype, "otpExpiration", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], RegisterDto.prototype, "is_verified", void 0);
 //# sourceMappingURL=register.dto.js.map

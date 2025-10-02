@@ -9,26 +9,22 @@ var RazorpayModule_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RazorpayModule = void 0;
 const common_1 = require("@nestjs/common");
-const config_1 = require("@nestjs/config");
-const razorpay_controller_1 = require("./razorpay.controller");
-const orders_module_1 = require("../orders/orders.module");
-const orders_service_1 = require("../orders/orders.service");
-const razorpay_service_1 = require("./razorpay.service");
+const Razorpay = require('razorpay');
 let RazorpayModule = RazorpayModule_1 = class RazorpayModule {
-    static forRootAsync() {
+    static forRoot(options) {
+        const razorpayProvider = {
+            provide: 'RAZORPAY_CLIENT',
+            useFactory: () => {
+                return new Razorpay({
+                    key_id: options.key_id,
+                    key_secret: options.key_secret,
+                });
+            },
+        };
         return {
             module: RazorpayModule_1,
-            controllers: [razorpay_controller_1.RazorpayController],
-            imports: [config_1.ConfigModule.forRoot(), orders_module_1.OrdersModule],
-            providers: [
-                orders_service_1.OrdersService,
-                razorpay_service_1.RazorpayService,
-                {
-                    provide: 'STRIPE_API_KEY',
-                    useFactory: async (configService) => configService.get('STRIPE_API_KEY'),
-                    inject: [config_1.ConfigService],
-                },
-            ],
+            providers: [razorpayProvider],
+            exports: [razorpayProvider],
         };
     }
 };

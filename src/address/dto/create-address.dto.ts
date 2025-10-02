@@ -1,8 +1,7 @@
 import { IsString, IsBoolean, IsOptional } from 'class-validator';
 
 export class CreateAddressDto {
-  @IsString()
-  customerProfileId: string;
+
 
   @IsString()
   name: string;
@@ -22,11 +21,9 @@ export class CreateAddressDto {
   @IsString()
   country: string;
 
-  @IsOptional()
   @IsString()
   phone?: string;
 
-  @IsOptional()
   @IsBoolean()
   isDefault?: boolean;
 }

@@ -1,66 +1,41 @@
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateCustomerProfileDto } from './dto/update-customer-profile.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
 export declare class UsersService {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    createCustomer(createUserDto: CreateUserDto): Promise<{
-        id: string;
-        email: string;
-        role: import(".prisma/client").$Enums.Roles;
-        createdAt: Date;
-        updatedAt: Date;
-    }>;
-    createAdmin(createUserDto: CreateUserDto): Promise<{
-        id: string;
-        email: string;
-        role: import(".prisma/client").$Enums.Roles;
-        createdAt: Date;
-        updatedAt: Date;
-    }>;
     findAll(role?: string): Promise<{
-        id: string;
         email: string;
+        id: string;
         role: import(".prisma/client").$Enums.Roles;
         createdAt: Date;
         updatedAt: Date;
     }[]>;
-    CutomerProfile(id: string): Promise<{
-        id: string;
+    CustomerProfile(id: string): Promise<{
         email: string;
+        id: string;
         role: import(".prisma/client").$Enums.Roles;
         createdAt: Date;
         updatedAt: Date;
         CustomerProfile: {
-            name: string;
-            phone: string;
-            address: string;
-            city: string;
-            state: string;
-            postalCode: string;
-            country: string;
-            profilePicture: string;
             addresses: {
-                id: string;
-                createdAt: Date;
-                updatedAt: Date;
-                name: string;
-                phone: string | null;
                 address: string;
+                name: string;
+                phone: string;
                 city: string;
                 state: string;
                 postalCode: string;
                 country: string;
-                customerProfileId: string | null;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                customerProfileId: string;
                 isDefault: boolean;
             }[];
             reviews: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                productId: string;
                 customerProfileId: string | null;
+                productId: string;
                 rating: number;
                 comment: string | null;
             }[];
@@ -75,6 +50,7 @@ export declare class UsersService {
                 createdAt: Date;
                 updatedAt: Date;
                 notes: string | null;
+                customerProfileId: string | null;
                 orderNumber: string;
                 status: import(".prisma/client").$Enums.OrderStatus;
                 paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
@@ -84,28 +60,38 @@ export declare class UsersService {
                 discountAmount: import("@prisma/client/runtime/library").Decimal;
                 shippingAddressId: string | null;
                 trackingID: string | null;
-                customerProfileId: string | null;
             }[];
             cart: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                productId: string;
                 customerProfileId: string | null;
+                productId: string;
                 quantity: number;
+            }[];
+            BankDetails: {
+                id: string;
+                customerProfileId: string | null;
+                accountNumber: string;
+                accountHolderName: string;
+                ifscCode: string;
+            }[];
+            Wishlist: {
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                customerProfileId: string;
+                productId: string;
             }[];
         };
     }>;
     AdminProfile(id: string): Promise<{
-        id: string;
         email: string;
+        id: string;
         role: import(".prisma/client").$Enums.Roles;
         createdAt: Date;
         updatedAt: Date;
         AdminProfile: {
-            name: string;
-            phone: string;
-            profilePicture: string;
             notes: string;
         };
     }>;
@@ -115,28 +101,26 @@ export declare class UsersService {
         createdAt: Date;
         updatedAt: Date;
         CustomerProfile: {
-            phone: string;
-            profilePicture: string;
             addresses: {
-                id: string;
-                createdAt: Date;
-                updatedAt: Date;
-                name: string;
-                phone: string | null;
                 address: string;
+                name: string;
+                phone: string;
                 city: string;
                 state: string;
                 postalCode: string;
                 country: string;
-                customerProfileId: string | null;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                customerProfileId: string;
                 isDefault: boolean;
             }[];
             reviews: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                productId: string;
                 customerProfileId: string | null;
+                productId: string;
                 rating: number;
                 comment: string | null;
             }[];
@@ -151,6 +135,7 @@ export declare class UsersService {
                 createdAt: Date;
                 updatedAt: Date;
                 notes: string | null;
+                customerProfileId: string | null;
                 orderNumber: string;
                 status: import(".prisma/client").$Enums.OrderStatus;
                 paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
@@ -160,51 +145,32 @@ export declare class UsersService {
                 discountAmount: import("@prisma/client/runtime/library").Decimal;
                 shippingAddressId: string | null;
                 trackingID: string | null;
-                customerProfileId: string | null;
             }[];
             cart: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                productId: string;
                 customerProfileId: string | null;
+                productId: string;
                 quantity: number;
+            }[];
+            BankDetails: {
+                id: string;
+                customerProfileId: string | null;
+                accountNumber: string;
+                accountHolderName: string;
+                ifscCode: string;
+            }[];
+            Wishlist: {
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                customerProfileId: string;
+                productId: string;
             }[];
         };
     }>;
     remove(id: string): Promise<{
         message: string;
-    }>;
-    createCustomerProfile(userId: string, data: UpdateCustomerProfileDto, profilePicture?: Express.Multer.File): Promise<{
-        id: string;
-        name: string;
-        phone: string | null;
-        address: string;
-        city: string;
-        state: string;
-        postalCode: string;
-        country: string;
-        profilePicture: string | null;
-        userId: string;
-    }>;
-    updateCustomerProfile(userId: string, data: UpdateCustomerProfileDto, profilePicture?: Express.Multer.File): Promise<{
-        id: string;
-        name: string;
-        phone: string | null;
-        address: string;
-        city: string;
-        state: string;
-        postalCode: string;
-        country: string;
-        profilePicture: string | null;
-        userId: string;
-    }>;
-    changePassword(userId: string, dto: ChangePasswordDto): Promise<{
-        id: string;
-        email: string;
-        role: import(".prisma/client").$Enums.Roles;
-        createdAt: Date;
-        updatedAt: Date;
-        password: string | null;
     }>;
 }

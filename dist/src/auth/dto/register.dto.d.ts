@@ -1,4 +1,6 @@
 export declare class RegisterDto {
     email: string;
-    password: string;
+    otp: string;
+    otpExpiration: Date;
+    is_verified?: boolean;
 }

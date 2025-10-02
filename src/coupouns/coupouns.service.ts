@@ -6,7 +6,7 @@ import { HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class CouponService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   // Add coupon
   async create(dto: CreateCouponDto) {

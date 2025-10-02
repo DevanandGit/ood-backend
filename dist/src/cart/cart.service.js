@@ -67,7 +67,9 @@ let CartService = class CartService {
         };
     }
     async getCart(userId) {
-        const customerProfile = await this.prisma.customerProfile.findUnique({ where: { userId } });
+        const customerProfile = await this.prisma.customerProfile.findUnique({
+            where: { userId },
+        });
         if (!customerProfile)
             throw new common_1.NotFoundException('Customer profile not found');
         return this.prisma.cartItem.findMany({
@@ -76,10 +78,14 @@ let CartService = class CartService {
         });
     }
     async updateCartItem(userId, cartItemId, updateCartDto) {
-        const customerProfile = await this.prisma.customerProfile.findUnique({ where: { userId } });
+        const customerProfile = await this.prisma.customerProfile.findUnique({
+            where: { userId },
+        });
         if (!customerProfile)
             throw new common_1.NotFoundException('Customer profile not found');
-        const cartItem = await this.prisma.cartItem.findUnique({ where: { id: cartItemId } });
+        const cartItem = await this.prisma.cartItem.findUnique({
+            where: { id: cartItemId },
+        });
         if (!cartItem || cartItem.customerProfileId !== customerProfile.id) {
             throw new common_1.NotFoundException('Cart item not found');
         }
@@ -92,10 +98,14 @@ let CartService = class CartService {
         });
     }
     async removeFromCart(userId, cartItemId) {
-        const customerProfile = await this.prisma.customerProfile.findUnique({ where: { userId } });
+        const customerProfile = await this.prisma.customerProfile.findUnique({
+            where: { userId },
+        });
         if (!customerProfile)
             throw new common_1.NotFoundException('Customer profile not found');
-        const cartItem = await this.prisma.cartItem.findUnique({ where: { id: cartItemId } });
+        const cartItem = await this.prisma.cartItem.findUnique({
+            where: { id: cartItemId },
+        });
         if (!cartItem || cartItem.customerProfileId !== customerProfile.id) {
             throw new common_1.NotFoundException('Cart item not found');
         }
