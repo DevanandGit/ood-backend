@@ -19,7 +19,8 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 
 @Controller('coupons')
 export class CouponController {
-  constructor(private readonly couponService: CouponService) {}
+  constructor(private readonly couponService: CouponService) { }
+
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
@@ -28,11 +29,19 @@ export class CouponController {
     return this.couponService.create(dto);
   }
 
-  // List
   @Get()
-  findAll() {
-    return this.couponService.findAll();
+  async findAll(
+    @Query('onlyValid') onlyValid?: string,
+    @Query('onlyExpired') onlyExpired?: string,
+    @Query('minSpent') minSpent?: string,
+  ) {
+    return this.couponService.findAll({
+      onlyValid: onlyValid === 'true',
+      onlyExpired: onlyExpired === 'true',
+      minSpent: minSpent ? Number(minSpent) : undefined,
+    });
   }
+
 
   // Get one
   @Get(':id')
@@ -54,9 +63,9 @@ export class CouponController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('applicable-coupouns')
+  @Get('applicable/coupouns')
   findApplicableCoupons(@Request() req) {
-    const profile_id = req.user.customerProfile.id;
+    const profile_id = req.user.id;
     return this.couponService.findApplicableCoupons(profile_id);
   }
 

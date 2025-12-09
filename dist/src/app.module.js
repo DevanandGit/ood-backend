@@ -18,7 +18,6 @@ const products_module_1 = require("./products/products.module");
 const cart_module_1 = require("./cart/cart.module");
 const razorpay_module_1 = require("./razorpay/razorpay.module");
 const coupouns_module_1 = require("./coupouns/coupouns.module");
-const notifications_module_1 = require("./firebase/notifications.module");
 const wishlist_module_1 = require("./wishlist/wishlist.module");
 const mailer_1 = require("@nestjs-modules/mailer");
 const pug_adapter_1 = require("@nestjs-modules/mailer/dist/adapters/pug.adapter");
@@ -27,6 +26,10 @@ const categories_module_1 = require("./categories/categories.module");
 const razorpay_service_1 = require("./razorpay/razorpay.service");
 const razorpay_controller_1 = require("./razorpay/razorpay.controller");
 const orders_module_1 = require("./orders/orders.module");
+const address_module_1 = require("./address/address.module");
+const notifications_module_1 = require("./notifications/notifications.module");
+const firebase_module_1 = require("./firebase/firebase.module");
+const device_token_module_1 = require("./token/device-token.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -46,9 +49,12 @@ exports.AppModule = AppModule = __decorate([
             cart_module_1.CartModule,
             categories_module_1.CategoryModule,
             coupouns_module_1.CouponModule,
-            notifications_module_1.NotificationsModule,
             wishlist_module_1.WishlistModule,
             orders_module_1.OrdersModule,
+            address_module_1.AddressModule,
+            notifications_module_1.NotificationModule,
+            firebase_module_1.FirebaseModule,
+            device_token_module_1.DeviceTokenModule,
             razorpay_module_1.RazorpayModule.forRoot({
                 key_id: process.env.RAZORPAY_KEY_ID,
                 key_secret: process.env.RAZORPAY_KEY_SECRET,

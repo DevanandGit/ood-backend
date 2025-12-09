@@ -38,7 +38,7 @@ enum CoupounValueType {
   amount
 }
 
-enum Roles {
+enum Role {
   ADMIN // manage store operations
   CUSTOMER // registered buyer
 }
@@ -46,9 +46,10 @@ enum Roles {
 model User {
   id          String    @id @default(uuid()) @map("id")
   email       String    @unique @map("email")
-  role        Roles     @default(CUSTOMER)
+  role        Role      @default(CUSTOMER)
   otp         String?
   expiresAt   DateTime?
+  password    String?
   is_verified Boolean   @default(false)
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
@@ -56,6 +57,7 @@ model User {
 
   CustomerProfile CustomerProfile?
   AdminProfile    AdminProfile?
+  Notification    Notification[]
 
   @@map("users")
 }
@@ -292,4 +294,29 @@ model NotifyMe {
   id        String  @id @default(uuid())
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id          String    @id @default(uuid())
+  userId      String?
+  title       String
+  body        String
+  icon        String?
+  isRead      Boolean   @default(false)
+  scheduledAt DateTime?
+  createdAt   DateTime  @default(now())
+  readAt      DateTime?
+  channels    Json?
+
+  // maybe soft delete in future
+  deletedAt DateTime?
+
+  user User? @relation(fields: [userId], references: [id])
+}
+
+model DeviceToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String
+  createdAt DateTime @default(now())
 }

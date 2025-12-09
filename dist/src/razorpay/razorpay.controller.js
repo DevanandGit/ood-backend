@@ -22,7 +22,7 @@ let RazorpayController = class RazorpayController {
         this.razorpayService = razorpayService;
     }
     async createOrder(req, dto) {
-        return this.razorpayService.createOrder(dto, req.user.customerProfileId);
+        return this.razorpayService.createOrder(dto, req.user.id);
     }
     async verifyPayment(body) {
         return this.razorpayService.verifyPaymentSignature(body.razorpay_order_id, body.razorpay_payment_id, body.razorpay_signature);

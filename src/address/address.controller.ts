@@ -21,23 +21,23 @@ export class AddressController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createAddressDto: CreateAddressDto, @Request() req) {
-    const profile_id = req.user.id
+    const userId = req.user.id
 
-    return this.addressService.create(createAddressDto, profile_id);
+    return this.addressService.create(createAddressDto, userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Request() req) {
-    const profile_id = req.user.customerProfile.id;
-    return this.addressService.findAll(profile_id);
+    const userId = req.user.id;
+    return this.addressService.findAll(userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Request() req, @Param('id') id: string) {
-    const profile_id = req.user.customerProfile.id;
-    return this.addressService.findOne(profile_id, id);
+    const userId = req.user.id
+    return this.addressService.findOne(userId, id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -47,14 +47,14 @@ export class AddressController {
     @Param('id') id: string,
     @Body() dto: UpdateAddressDto,
   ) {
-    const profile_id = req.user.customerProfile.id;
-    return this.addressService.update(profile_id, id, dto);
+    const userId = req.user.id
+    return this.addressService.update(userId, id, dto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Request() req, @Param('id') id: string) {
-    const profile_id = req.user.customerProfile.id;
-    return this.addressService.remove(profile_id, id);
+    const userId = req.user.id
+    return this.addressService.remove(userId, id);
   }
 }

@@ -11,14 +11,16 @@ export declare class AuthService {
     constructor(prisma: PrismaService, usersService: UsersService, jwtService: JwtService, mailerService: MailerService);
     sendOtp(loginDto: LoginDto): Promise<{
         message: string;
+        data: string;
     }>;
     verifyOtp(email: string, otp: string): Promise<{
         user: {
-            email: string;
             id: string;
-            role: import(".prisma/client").$Enums.Roles;
+            email: string;
+            role: import(".prisma/client").$Enums.Role;
             otp: string | null;
             expiresAt: Date | null;
+            password: string | null;
             is_verified: boolean;
             createdAt: Date;
             updatedAt: Date;
@@ -29,9 +31,9 @@ export declare class AuthService {
         status: number;
     }>;
     getAdminProfile(id: string, role: string): Promise<{
-        email: string;
         id: string;
-        role: import(".prisma/client").$Enums.Roles;
+        email: string;
+        role: import(".prisma/client").$Enums.Role;
         createdAt: Date;
         updatedAt: Date;
         AdminProfile: {
@@ -39,24 +41,24 @@ export declare class AuthService {
         };
     }>;
     getCustomerProfile(id: string, role: string): Promise<{
-        email: string;
         id: string;
-        role: import(".prisma/client").$Enums.Roles;
+        email: string;
+        role: import(".prisma/client").$Enums.Role;
         createdAt: Date;
         updatedAt: Date;
         CustomerProfile: {
             addresses: {
-                address: string;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 name: string;
-                phone: string;
+                address: string;
+                customerProfileId: string;
                 city: string;
                 state: string;
                 postalCode: string;
                 country: string;
-                id: string;
-                createdAt: Date;
-                updatedAt: Date;
-                customerProfileId: string;
+                phone: string;
                 isDefault: boolean;
             }[];
             reviews: {
@@ -113,5 +115,14 @@ export declare class AuthService {
                 productId: string;
             }[];
         };
+    }>;
+    register(dto: LoginDto): Promise<{
+        message: string;
+        data: string;
+    }>;
+    getProfile(id: string, role: string): Promise<{
+        id: string;
+        userId: string;
+        notes: string | null;
     }>;
 }

@@ -10,7 +10,6 @@ import { ProductModule } from './products/products.module';
 import { CartModule } from './cart/cart.module';
 import { RazorpayModule } from './razorpay/razorpay.module';
 import { CouponModule } from './coupouns/coupouns.module';
-import { NotificationsModule } from './firebase/notifications.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
@@ -19,6 +18,10 @@ import { CategoryModule } from './categories/categories.module';
 import { RazorpayService } from './razorpay/razorpay.service';
 import { RazorpayController } from './razorpay/razorpay.controller';
 import { OrdersModule } from './orders/orders.module';
+import { AddressModule } from './address/address.module';
+import { NotificationModule } from './notifications/notifications.module';
+import { FirebaseModule } from './firebase/firebase.module';
+import { DeviceTokenModule } from './token/device-token.module';
 
 @Module({
   imports: [
@@ -35,10 +38,12 @@ import { OrdersModule } from './orders/orders.module';
     CartModule,
     CategoryModule,
     CouponModule,
-    NotificationsModule,
     WishlistModule,
     OrdersModule,
-
+    AddressModule,
+    NotificationModule,
+    FirebaseModule,
+    DeviceTokenModule,
 
     RazorpayModule.forRoot({
       key_id: process.env.RAZORPAY_KEY_ID, // Use environment variables for keys

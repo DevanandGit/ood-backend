@@ -1,4 +1,4 @@
-import { Roles } from '@prisma/client';
+
 import {
   IsEmail,
   IsString,

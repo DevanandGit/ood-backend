@@ -7,7 +7,12 @@ const express_1 = require("express");
 const response_interceptor_1 = require("./common/interceptors/response.interceptor");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
-    app.setGlobalPrefix('v1');
+    app.enableCors({
+        origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        credentials: true,
+    });
+    app.setGlobalPrefix('backend');
     app.use('/api/webhooks/stripe', (0, express_1.json)({
         verify: (req, res, buf) => {
             req.rawBody = buf;
@@ -21,7 +26,6 @@ async function bootstrap() {
         transform: true,
     }));
     app.enableCors();
-    app.useGlobalPipes(new common_1.ValidationPipe({ whitelist: true }));
     app.useGlobalInterceptors(new response_interceptor_1.ResponseInterceptor());
     await app.listen(process.env.PORT || 3000);
     console.log(`Application is running on: ${await app.getUrl()}`);

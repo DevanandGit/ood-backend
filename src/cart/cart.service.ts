@@ -9,7 +9,7 @@ import { UpdateCartDto } from './dto/update-cart-item.dto';
 
 @Injectable()
 export class CartService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async addToCart(userId: string, addToCartDto: AddToCartDto) {
     const { productId, quantity } = addToCartDto;
@@ -114,7 +114,7 @@ export class CartService {
     });
   }
 
-  async removeFromCart(userId: string, cartItemId: string) {
+  async deletecart(userId: string, cartItemId: string) {
     const customerProfile = await this.prisma.customerProfile.findUnique({
       where: { userId },
     });
@@ -131,4 +131,45 @@ export class CartService {
     await this.prisma.cartItem.delete({ where: { id: cartItemId } });
     return { message: 'Item removed from cart successfully' };
   }
+
+  async removeFromCart(
+    userId: string,
+    cartItemId: string,
+    updateCartDto: UpdateCartDto,
+  ) {
+    const customerProfile = await this.prisma.customerProfile.findUnique({
+      where: { userId },
+    });
+    if (!customerProfile)
+      throw new NotFoundException('Customer profile not found');
+
+    const cartItem = await this.prisma.cartItem.findUnique({
+      where: { id: cartItemId },
+    });
+    if (!cartItem || cartItem.customerProfileId !== customerProfile.id) {
+      throw new NotFoundException('Cart item not found');
+    }
+
+    const reduceBy = updateCartDto.quantity ?? 1; // default reduce by 1
+
+    const newQuantity = cartItem.quantity - reduceBy;
+
+    // If quantity <= 0 → delete item
+    if (newQuantity <= 0) {
+      await this.prisma.cartItem.delete({
+        where: { id: cartItemId },
+      });
+
+      return { message: 'Item removed from cart' };
+    }
+
+    // Otherwise update quantity
+    await this.prisma.cartItem.update({
+      where: { id: cartItemId },
+      data: { quantity: newQuantity },
+    });
+
+    return { message: 'Cart updated', quantity: newQuantity };
+  }
+
 }

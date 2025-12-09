@@ -36,28 +36,31 @@ export class AddressService {
 
   async findAll(profile_id: string) {
     return this.prisma.address.findMany({
-      where: { customerProfileId: profile_id },
+      where: { CustomerProfile: { userId: profile_id } },
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  async findOne(profile_id: string, id: string) {
-    const address = await this.prisma.address.findUnique({ where: { id } });
+  async findOne(userId: string, id: string) {
+    const user = await this.prisma.customerProfile.findUnique({
+      where: { userId: userId }
+    })
+    if (!user) {
+      throw new NotFoundException("user not found")
+    }
+    const address = await this.prisma.address.findFirst({
+      where: { customerProfileId: user.id }
+    });
 
     if (!address) {
       throw new NotFoundException(`Address with id ${id} not found`);
-    }
-
-    if (address.customerProfileId !== profile_id) {
-      throw new ForbiddenException(
-        'You are not allowed to access this address',
-      );
     }
 
     return address;
   }
 
   async update(profile_id: string, id: string, dto: UpdateAddressDto) {
+
     await this.findOne(profile_id, id); // ensure belongs to profile
     return this.prisma.address.update({
       where: { id },

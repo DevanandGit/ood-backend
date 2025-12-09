@@ -27,16 +27,11 @@ exports.AuthModule = AuthModule = __decorate([
             prisma_module_1.PrismaModule,
             users_module_1.UsersModule,
             mailer_1.MailerModule,
-            passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
-            jwt_1.JwtModule.registerAsync({
-                imports: [config_1.ConfigModule],
-                inject: [config_1.ConfigService],
-                useFactory: async (configService) => ({
-                    secret: configService.get('JWT_SECRET'),
-                    signOptions: {
-                        expiresIn: configService.get('JWT_EXPIRATION', '24h'),
-                    },
-                }),
+            config_1.ConfigModule,
+            passport_1.PassportModule,
+            jwt_1.JwtModule.register({
+                secret: process.env.JWT_SECRET || 'super-secret-key',
+                signOptions: { expiresIn: '7d' },
             }),
         ],
         controllers: [auth_controller_1.AuthController],

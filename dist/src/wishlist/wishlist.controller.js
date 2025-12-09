@@ -30,13 +30,13 @@ let WishlistController = class WishlistController {
         const profile_id = req.user.id;
         return this.wishlistService.getWishlist(profile_id, pagination);
     }
-    removeFromWishlist(id, req) {
-        const profile_id = req.user.id;
-        return this.wishlistService.removeFromWishlist(id, profile_id);
-    }
     clearWishlist(req) {
         const profile_id = req.user.id;
         return this.wishlistService.clearWishlist(profile_id);
+    }
+    removeFromWishlist(id, req) {
+        const profile_id = req.user.id;
+        return this.wishlistService.removeFromWishlist(id, profile_id);
     }
 };
 exports.WishlistController = WishlistController;
@@ -60,20 +60,21 @@ __decorate([
 ], WishlistController.prototype, "getWishlist", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Delete)(),
-    __param(0, (0, common_1.Query)('id')),
-    __param(1, (0, common_1.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", void 0)
-], WishlistController.prototype, "removeFromWishlist", null);
-__decorate([
-    (0, common_1.Delete)(),
+    (0, common_1.Delete)('all/clear'),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], WishlistController.prototype, "clearWishlist", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Delete)(":id"),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], WishlistController.prototype, "removeFromWishlist", null);
 exports.WishlistController = WishlistController = __decorate([
     (0, common_1.Controller)('wishlist'),
     __metadata("design:paramtypes", [wishlist_service_1.WishlistService])

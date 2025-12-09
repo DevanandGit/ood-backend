@@ -9,7 +9,7 @@ import { PaginationDto } from 'src/pagination/dto/pagination.dto';
 import { PaginationResponseDto } from 'src/pagination/pagination-response.dto';
 @Injectable()
 export class WishlistService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async addToWishlist(dto: CreateWishlistDto, userId: string) {
     const { productId } = dto;

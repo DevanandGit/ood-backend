@@ -11,7 +11,7 @@ export class RazorpayController {
   @UseGuards(JwtAuthGuard)
   @Post('create-order')
   async createOrder(@Request() req, @Body() dto: CreatePaymentIntentDto) {
-    return this.razorpayService.createOrder(dto, req.user.customerProfileId);
+    return this.razorpayService.createOrder(dto, req.user.id);
   }
 
   @Post('verify-payment')

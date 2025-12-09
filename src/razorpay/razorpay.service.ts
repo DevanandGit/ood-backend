@@ -1,5 +1,5 @@
 // src/payment/payment.service.ts
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import Razorpay from 'razorpay';
 import { CreatePaymentIntentDto } from './dto/checkout.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -12,6 +12,12 @@ export class RazorpayService {
   async createOrder(dto: CreatePaymentIntentDto, customerProfileId: string) {
     const { productId, quantity, cartId, currency } = dto;
 
+    const user = await this.prisma.customerProfile.findUnique({
+      where: { userId: customerProfileId }
+    })
+    if (!user) {
+      throw new NotFoundException("user not found")
+    }
     let amount = 0;
     let orderItemsData = []; // for creating order_items
 
@@ -35,7 +41,7 @@ export class RazorpayService {
     else if (cartId) {
       // Get all cart items for the customer
       const cartItems = await this.prisma.cartItem.findMany({
-        where: { customerProfileId: customerProfileId },
+        where: { customerProfileId: user.id },
         include: { product: true },
       });
 
@@ -65,7 +71,7 @@ export class RazorpayService {
         status: 'pending',
         paymentStatus: 'pending',
         totalAmount: amount,
-        customerProfileId,
+        customerProfileId: user.id,
         items: {
           create: orderItemsData.map((item) => ({
             productId: item.productId,

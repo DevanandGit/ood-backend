@@ -10,24 +10,24 @@ export declare class OrdersService {
     create(createOrderDto: CreateOrderDto): Promise<{
         items: {
             id: string;
-            productId: string;
-            quantity: number;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
+            productId: string;
+            quantity: number;
             orderId: string;
         }[];
         shippingAddress: {
-            address: string;
+            id: string;
             name: string;
-            phone: string;
+            createdAt: Date;
+            updatedAt: Date;
+            address: string;
+            customerProfileId: string;
             city: string;
             state: string;
             postalCode: string;
             country: string;
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            customerProfileId: string;
+            phone: string;
             isDefault: boolean;
         };
     } & {
@@ -49,24 +49,24 @@ export declare class OrdersService {
     findAll(pagination: PaginationDto, profile_id: string): Promise<PaginationResponseDto<{
         items: {
             id: string;
-            productId: string;
-            quantity: number;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
+            productId: string;
+            quantity: number;
             orderId: string;
         }[];
         shippingAddress: {
-            address: string;
+            id: string;
             name: string;
-            phone: string;
+            createdAt: Date;
+            updatedAt: Date;
+            address: string;
+            customerProfileId: string;
             city: string;
             state: string;
             postalCode: string;
             country: string;
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            customerProfileId: string;
+            phone: string;
             isDefault: boolean;
         };
     } & {
@@ -88,24 +88,24 @@ export declare class OrdersService {
     findOne(id: string): Promise<{
         items: {
             id: string;
-            productId: string;
-            quantity: number;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
+            productId: string;
+            quantity: number;
             orderId: string;
         }[];
         shippingAddress: {
-            address: string;
+            id: string;
             name: string;
-            phone: string;
+            createdAt: Date;
+            updatedAt: Date;
+            address: string;
+            customerProfileId: string;
             city: string;
             state: string;
             postalCode: string;
             country: string;
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            customerProfileId: string;
+            phone: string;
             isDefault: boolean;
         };
     } & {
@@ -127,24 +127,24 @@ export declare class OrdersService {
     update(id: string, updateOrderDto: UpdateOrderDto): Promise<{
         items: {
             id: string;
-            productId: string;
-            quantity: number;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
+            productId: string;
+            quantity: number;
             orderId: string;
         }[];
         shippingAddress: {
-            address: string;
+            id: string;
             name: string;
-            phone: string;
+            createdAt: Date;
+            updatedAt: Date;
+            address: string;
+            customerProfileId: string;
             city: string;
             state: string;
             postalCode: string;
             country: string;
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            customerProfileId: string;
+            phone: string;
             isDefault: boolean;
         };
     } & {
@@ -182,24 +182,24 @@ export declare class OrdersService {
     findByUser(profile_id: string): Promise<({
         items: {
             id: string;
-            productId: string;
-            quantity: number;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
+            productId: string;
+            quantity: number;
             orderId: string;
         }[];
         shippingAddress: {
-            address: string;
+            id: string;
             name: string;
-            phone: string;
+            createdAt: Date;
+            updatedAt: Date;
+            address: string;
+            customerProfileId: string;
             city: string;
             state: string;
             postalCode: string;
             country: string;
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            customerProfileId: string;
+            phone: string;
             isDefault: boolean;
         };
     } & {
@@ -237,24 +237,24 @@ export declare class OrdersService {
     updateTrackingDetails(orderId: string, trackingDetails: string): Promise<{
         items: {
             id: string;
-            productId: string;
-            quantity: number;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
+            productId: string;
+            quantity: number;
             orderId: string;
         }[];
         shippingAddress: {
-            address: string;
+            id: string;
             name: string;
-            phone: string;
+            createdAt: Date;
+            updatedAt: Date;
+            address: string;
+            customerProfileId: string;
             city: string;
             state: string;
             postalCode: string;
             country: string;
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            customerProfileId: string;
+            phone: string;
             isDefault: boolean;
         };
     } & {

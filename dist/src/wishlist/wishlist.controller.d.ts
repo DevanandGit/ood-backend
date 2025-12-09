@@ -6,10 +6,10 @@ export declare class WishlistController {
     constructor(wishlistService: WishlistService);
     addToWishlist(dto: CreateWishlistDto, req: any): Promise<{
         product: {
-            name: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
             description: string | null;
@@ -20,17 +20,17 @@ export declare class WishlistController {
         };
     } & {
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
         customerProfileId: string;
         productId: string;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     getWishlist(req: any, pagination: PaginationDto): Promise<import("../pagination/pagination-response.dto").PaginationResponseDto<{
         product: {
-            name: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
             description: string | null;
@@ -41,17 +41,17 @@ export declare class WishlistController {
         };
     } & {
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
         customerProfileId: string;
         productId: string;
+        createdAt: Date;
+        updatedAt: Date;
     }>>;
+    clearWishlist(req: any): Promise<import(".prisma/client").Prisma.BatchPayload>;
     removeFromWishlist(id: string, req: any): Promise<{
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
         customerProfileId: string;
         productId: string;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
-    clearWishlist(req: any): Promise<import(".prisma/client").Prisma.BatchPayload>;
 }

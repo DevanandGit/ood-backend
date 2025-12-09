@@ -3,41 +3,48 @@ export declare class UsersService {
     private readonly prisma;
     constructor(prisma: PrismaService);
     findAll(role?: string): Promise<{
-        email: string;
         id: string;
-        role: import(".prisma/client").$Enums.Roles;
         createdAt: Date;
         updatedAt: Date;
+        email: string;
+        role: import(".prisma/client").$Enums.Role;
     }[]>;
     CustomerProfile(id: string): Promise<{
-        email: string;
         id: string;
-        role: import(".prisma/client").$Enums.Roles;
         createdAt: Date;
         updatedAt: Date;
+        email: string;
+        role: import(".prisma/client").$Enums.Role;
         CustomerProfile: {
-            addresses: {
-                address: string;
-                name: string;
-                phone: string;
-                city: string;
-                state: string;
-                postalCode: string;
-                country: string;
-                id: string;
-                createdAt: Date;
-                updatedAt: Date;
-                customerProfileId: string;
-                isDefault: boolean;
-            }[];
             reviews: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                customerProfileId: string | null;
                 productId: string;
+                customerProfileId: string | null;
                 rating: number;
                 comment: string | null;
+            }[];
+            Wishlist: {
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                productId: string;
+                customerProfileId: string;
+            }[];
+            addresses: {
+                id: string;
+                name: string;
+                createdAt: Date;
+                updatedAt: Date;
+                address: string;
+                customerProfileId: string;
+                city: string;
+                state: string;
+                postalCode: string;
+                country: string;
+                phone: string;
+                isDefault: boolean;
             }[];
             couponUsages: {
                 id: string;
@@ -65,9 +72,9 @@ export declare class UsersService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                customerProfileId: string | null;
                 productId: string;
                 quantity: number;
+                customerProfileId: string | null;
             }[];
             BankDetails: {
                 id: string;
@@ -76,53 +83,53 @@ export declare class UsersService {
                 accountHolderName: string;
                 ifscCode: string;
             }[];
-            Wishlist: {
-                id: string;
-                createdAt: Date;
-                updatedAt: Date;
-                customerProfileId: string;
-                productId: string;
-            }[];
         };
     }>;
     AdminProfile(id: string): Promise<{
-        email: string;
         id: string;
-        role: import(".prisma/client").$Enums.Roles;
         createdAt: Date;
         updatedAt: Date;
+        email: string;
+        role: import(".prisma/client").$Enums.Role;
         AdminProfile: {
             notes: string;
         };
     }>;
     findByEmail(email: string): Promise<{
         id: string;
-        role: import(".prisma/client").$Enums.Roles;
         createdAt: Date;
         updatedAt: Date;
+        role: import(".prisma/client").$Enums.Role;
         CustomerProfile: {
-            addresses: {
-                address: string;
-                name: string;
-                phone: string;
-                city: string;
-                state: string;
-                postalCode: string;
-                country: string;
-                id: string;
-                createdAt: Date;
-                updatedAt: Date;
-                customerProfileId: string;
-                isDefault: boolean;
-            }[];
             reviews: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                customerProfileId: string | null;
                 productId: string;
+                customerProfileId: string | null;
                 rating: number;
                 comment: string | null;
+            }[];
+            Wishlist: {
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                productId: string;
+                customerProfileId: string;
+            }[];
+            addresses: {
+                id: string;
+                name: string;
+                createdAt: Date;
+                updatedAt: Date;
+                address: string;
+                customerProfileId: string;
+                city: string;
+                state: string;
+                postalCode: string;
+                country: string;
+                phone: string;
+                isDefault: boolean;
             }[];
             couponUsages: {
                 id: string;
@@ -150,9 +157,9 @@ export declare class UsersService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                customerProfileId: string | null;
                 productId: string;
                 quantity: number;
+                customerProfileId: string | null;
             }[];
             BankDetails: {
                 id: string;
@@ -160,13 +167,6 @@ export declare class UsersService {
                 accountNumber: string;
                 accountHolderName: string;
                 ifscCode: string;
-            }[];
-            Wishlist: {
-                id: string;
-                createdAt: Date;
-                updatedAt: Date;
-                customerProfileId: string;
-                productId: string;
             }[];
         };
     }>;

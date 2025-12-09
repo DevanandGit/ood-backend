@@ -23,24 +23,24 @@ let AddressController = class AddressController {
         this.addressService = addressService;
     }
     create(createAddressDto, req) {
-        const profile_id = req.user.id;
-        return this.addressService.create(createAddressDto, profile_id);
+        const userId = req.user.id;
+        return this.addressService.create(createAddressDto, userId);
     }
     findAll(req) {
-        const profile_id = req.user.customerProfile.id;
-        return this.addressService.findAll(profile_id);
+        const userId = req.user.id;
+        return this.addressService.findAll(userId);
     }
     async findOne(req, id) {
-        const profile_id = req.user.customerProfile.id;
-        return this.addressService.findOne(profile_id, id);
+        const userId = req.user.id;
+        return this.addressService.findOne(userId, id);
     }
     async update(req, id, dto) {
-        const profile_id = req.user.customerProfile.id;
-        return this.addressService.update(profile_id, id, dto);
+        const userId = req.user.id;
+        return this.addressService.update(userId, id, dto);
     }
     async remove(req, id) {
-        const profile_id = req.user.customerProfile.id;
-        return this.addressService.remove(profile_id, id);
+        const userId = req.user.id;
+        return this.addressService.remove(userId, id);
     }
 };
 exports.AddressController = AddressController;

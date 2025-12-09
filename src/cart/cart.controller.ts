@@ -44,11 +44,21 @@ export class CartController {
     const profile_id = req.user.id;
     return this.cartService.updateCartItem(profile_id, id, updateCartDto);
   }
+  @UseGuards(JwtAuthGuard)
+  @Patch('remove/:id')
+  async removeCart(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() updateCartDto: UpdateCartDto,
+  ) {
+    const profile_id = req.user.id;
+    return this.cartService.removeFromCart(profile_id, id, updateCartDto);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async removeFromCart(@Request() req, @Param('id') id: string) {
+  async deletecart(@Request() req, @Param('id') id: string) {
     const profile_id = req.user.id;
-    return this.cartService.removeFromCart(profile_id, id);
+    return this.cartService.deletecart(profile_id, id);
   }
 }

@@ -5,11 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import * as bcrypt from 'bcrypt';
-import { Roles } from '@prisma/client';
-import { UpdateCustomerProfileDto } from './dto/update-customer-profile.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
+
 
 @Injectable()
 export class UsersService {

@@ -2,16 +2,15 @@ import {
   Injectable,
   UnauthorizedException,
   ForbiddenException,
+  ConflictException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
-import { Roles } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { generate6DigitOtp } from 'src/common/utility/utils';
 import { MailerService } from '@nestjs-modules/mailer';
 import { LoginDto } from './dto/login.dto';
-import { r } from '@faker-js/faker/dist/airline-CHFQMWko';
-import { stat } from 'fs';
 
 @Injectable()
 export class AuthService {
@@ -31,8 +30,9 @@ export class AuthService {
           email: loginDto.email,
           otp: otp,
           expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes from now
-          role: Roles.CUSTOMER,
+          role: Role.CUSTOMER,
           is_verified: false,
+          CustomerProfile: { create: {} }
         }
       });
     }
@@ -45,15 +45,15 @@ export class AuthService {
         }
       });
     }
-    await this.mailerService.sendMail({
-      to: loginDto.email,
-      subject: 'Login OTP',
-      template: 'authentication', // ✅ refers to authentication.pug
-      context: {
-        otp, // ✅ available inside the template
-      },
-    });
-    return { message: 'OTP sent successfully' };
+    // await this.mailerService.sendMail({
+    //   to: loginDto.email,
+    //   subject: 'Login OTP',
+    //   template: 'authentication', // ✅ refers to authentication.pug
+    //   context: {
+    //     otp, // ✅ available inside the template
+    //   },
+    // });
+    return { message: 'OTP sent successfully', data: otp };
   }
 
 
@@ -79,7 +79,7 @@ export class AuthService {
       else {
         return {
           user,
-          accessToken: this.jwtService.sign({ sub: user.id, email: user.email }),
+          accessToken: this.jwtService.sign({ sub: user.id, email: user.email, role: user.role }),
           message: 'User registered successfully',
           status: 201,
         }
@@ -90,16 +90,63 @@ export class AuthService {
   };
 
   async getAdminProfile(id: string, role: string) {
-    if (role !== Roles.ADMIN) {
+    if (role !== Role.ADMIN) {
       throw new ForbiddenException('Profile cannot be accessed');
     }
     return this.usersService.AdminProfile(id);
   }
 
   async getCustomerProfile(id: string, role: string) {
-    if (role === Roles.CUSTOMER) {
+    if (role === Role.CUSTOMER) {
       throw new ForbiddenException('Profile cannot be accessed');
     }
     return this.usersService.CustomerProfile(id);
+  }
+
+
+
+  /** REGISTER ADMIN */
+  async register(dto: LoginDto) {
+    const otp = generate6DigitOtp();
+    let user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    if (!user) {
+      await this.prisma.user.create({
+        data: {
+          email: dto.email,
+          otp: otp,
+          expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes from now
+          role: Role.ADMIN,
+          is_verified: false,
+          AdminProfile: { create: {} }
+        }
+      });
+    }
+    else {
+      user = await this.prisma.user.update({
+        where: { email: dto.email },
+        data: {
+          otp: otp,
+          expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes from now
+        }
+      });
+    }
+    // await this.mailerService.sendMail({
+    //   to: loginDto.email,
+    //   subject: 'Login OTP',
+    //   template: 'authentication', // ✅ refers to authentication.pug
+    //   context: {
+    //     otp, // ✅ available inside the template
+    //   },
+    // });
+    return { message: 'OTP sent successfully', data: otp };
+  }
+
+
+  /** PROFILE */
+  async getProfile(id: string, role: string) {
+    if (role !== Role.ADMIN) {
+      throw new ForbiddenException('Access denied');
+    }
+    return this.prisma.adminProfile.findUnique({ where: { userId: id } });
   }
 }

@@ -6,14 +6,16 @@ export declare class AuthController {
     constructor(authService: AuthService);
     sendOtp(loginDto: LoginDto): Promise<{
         message: string;
+        data: string;
     }>;
     verifyOtp(otpVerifyDto: OtpVerifyDto): Promise<{
         user: {
-            email: string;
             id: string;
-            role: import(".prisma/client").$Enums.Roles;
+            email: string;
+            role: import(".prisma/client").$Enums.Role;
             otp: string | null;
             expiresAt: Date | null;
+            password: string | null;
             is_verified: boolean;
             createdAt: Date;
             updatedAt: Date;
@@ -24,9 +26,9 @@ export declare class AuthController {
         status: number;
     }>;
     getAdminProfile(req: any): Promise<{
-        email: string;
         id: string;
-        role: import(".prisma/client").$Enums.Roles;
+        email: string;
+        role: import(".prisma/client").$Enums.Role;
         createdAt: Date;
         updatedAt: Date;
         AdminProfile: {
@@ -34,24 +36,24 @@ export declare class AuthController {
         };
     }>;
     getCustomerProfile(req: any): Promise<{
-        email: string;
         id: string;
-        role: import(".prisma/client").$Enums.Roles;
+        email: string;
+        role: import(".prisma/client").$Enums.Role;
         createdAt: Date;
         updatedAt: Date;
         CustomerProfile: {
             addresses: {
-                address: string;
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 name: string;
-                phone: string;
+                address: string;
+                customerProfileId: string;
                 city: string;
                 state: string;
                 postalCode: string;
                 country: string;
-                id: string;
-                createdAt: Date;
-                updatedAt: Date;
-                customerProfileId: string;
+                phone: string;
                 isDefault: boolean;
             }[];
             reviews: {
@@ -108,5 +110,14 @@ export declare class AuthController {
                 productId: string;
             }[];
         };
+    }>;
+    register(dto: LoginDto): Promise<{
+        message: string;
+        data: string;
+    }>;
+    profile(req: any): Promise<{
+        id: string;
+        userId: string;
+        notes: string | null;
     }>;
 }

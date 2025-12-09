@@ -97,7 +97,7 @@ let CartService = class CartService {
             data: { ...updateCartDto },
         });
     }
-    async removeFromCart(userId, cartItemId) {
+    async deletecart(userId, cartItemId) {
         const customerProfile = await this.prisma.customerProfile.findUnique({
             where: { userId },
         });
@@ -111,6 +111,32 @@ let CartService = class CartService {
         }
         await this.prisma.cartItem.delete({ where: { id: cartItemId } });
         return { message: 'Item removed from cart successfully' };
+    }
+    async removeFromCart(userId, cartItemId, updateCartDto) {
+        const customerProfile = await this.prisma.customerProfile.findUnique({
+            where: { userId },
+        });
+        if (!customerProfile)
+            throw new common_1.NotFoundException('Customer profile not found');
+        const cartItem = await this.prisma.cartItem.findUnique({
+            where: { id: cartItemId },
+        });
+        if (!cartItem || cartItem.customerProfileId !== customerProfile.id) {
+            throw new common_1.NotFoundException('Cart item not found');
+        }
+        const reduceBy = updateCartDto.quantity ?? 1;
+        const newQuantity = cartItem.quantity - reduceBy;
+        if (newQuantity <= 0) {
+            await this.prisma.cartItem.delete({
+                where: { id: cartItemId },
+            });
+            return { message: 'Item removed from cart' };
+        }
+        await this.prisma.cartItem.update({
+            where: { id: cartItemId },
+            data: { quantity: newQuantity },
+        });
+        return { message: 'Cart updated', quantity: newQuantity };
     }
 };
 exports.CartService = CartService;

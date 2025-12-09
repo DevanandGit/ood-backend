@@ -19,10 +19,10 @@ export declare class CartService {
                 sortOrder: number;
             }[];
         } & {
-            name: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
             description: string | null;
@@ -33,21 +33,28 @@ export declare class CartService {
         };
     } & {
         id: string;
+        productId: string;
+        quantity: number;
         createdAt: Date;
         updatedAt: Date;
         customerProfileId: string | null;
-        productId: string;
-        quantity: number;
     })[]>;
     updateCartItem(userId: string, cartItemId: string, updateCartDto: UpdateCartDto): Promise<{
         id: string;
+        productId: string;
+        quantity: number;
         createdAt: Date;
         updatedAt: Date;
         customerProfileId: string | null;
-        productId: string;
-        quantity: number;
     }>;
-    removeFromCart(userId: string, cartItemId: string): Promise<{
+    deletecart(userId: string, cartItemId: string): Promise<{
         message: string;
+    }>;
+    removeFromCart(userId: string, cartItemId: string, updateCartDto: UpdateCartDto): Promise<{
+        message: string;
+        quantity?: undefined;
+    } | {
+        message: string;
+        quantity: number;
     }>;
 }

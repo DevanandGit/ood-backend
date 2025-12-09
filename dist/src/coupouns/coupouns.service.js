@@ -22,16 +22,24 @@ let CouponService = class CouponService {
             data: dto,
         });
     }
-    async findAll() {
+    async findAll(query) {
         const now = new Date();
         const coupons = await this.prisma.coupon.findMany({
             orderBy: { createdAt: 'desc' },
+            where: {
+                ...(query?.onlyValid && {
+                    validFrom: { lte: now.toISOString() },
+                    ValidTill: { gte: now.toISOString() },
+                }),
+                ...(query?.onlyExpired && {
+                    ValidTill: { lt: now.toISOString() },
+                }),
+                ...(query?.minSpent && {
+                    minimumSpent: { lte: query.minSpent },
+                }),
+            },
         });
-        return coupons.filter((coupon) => {
-            const validFrom = new Date(coupon.validFrom);
-            const validTo = new Date(coupon.ValidTill);
-            return validFrom <= now && validTo >= now;
-        });
+        return coupons;
     }
     async findOne(id) {
         const coupon = await this.prisma.coupon.findUnique({ where: { id } });

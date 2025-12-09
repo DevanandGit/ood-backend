@@ -10,6 +10,7 @@ import {
   UploadedFiles,
   UseInterceptors,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -18,11 +19,17 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { extname } from 'path';
 import { ProductQueryDto } from './dto/ product-query.dto';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { Role } from '@prisma/client';
 
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Post()
   @UseInterceptors(
     FilesInterceptor('images', 10, {
@@ -55,6 +62,9 @@ export class ProductController {
     return this.productService.findOne(id);
   }
 
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Patch(':id')
   @UseInterceptors(
     FilesInterceptor('images', 10, {
@@ -76,6 +86,9 @@ export class ProductController {
     return this.productService.update(id, updateProductDto, imagePaths);
   }
 
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productService.remove(id);

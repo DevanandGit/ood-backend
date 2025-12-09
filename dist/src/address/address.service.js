@@ -40,17 +40,22 @@ let AddressService = class AddressService {
     }
     async findAll(profile_id) {
         return this.prisma.address.findMany({
-            where: { customerProfileId: profile_id },
+            where: { CustomerProfile: { userId: profile_id } },
             orderBy: { createdAt: 'desc' },
         });
     }
-    async findOne(profile_id, id) {
-        const address = await this.prisma.address.findUnique({ where: { id } });
+    async findOne(userId, id) {
+        const user = await this.prisma.customerProfile.findUnique({
+            where: { userId: userId }
+        });
+        if (!user) {
+            throw new common_1.NotFoundException("user not found");
+        }
+        const address = await this.prisma.address.findFirst({
+            where: { customerProfileId: user.id }
+        });
         if (!address) {
             throw new common_1.NotFoundException(`Address with id ${id} not found`);
-        }
-        if (address.customerProfileId !== profile_id) {
-            throw new common_1.ForbiddenException('You are not allowed to access this address');
         }
         return address;
     }

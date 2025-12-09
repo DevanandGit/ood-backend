@@ -15,15 +15,10 @@ import {
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { OtpVerifyDto } from './dto/otp-verify.dto';
-import { EmailDto } from './dto/email.dto';
-import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
-import { UpdateCustomerProfileDto } from 'src/users/dto/update-customer-profile.dto';
-import { UsersService } from 'src/users/users.service';
-import { ChangePasswordDto } from 'src/users/dto/change-password.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Role } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -59,5 +54,21 @@ export class AuthController {
     const userId = req.user.id;
     const role = req.user.role;
     return this.authService.getCustomerProfile(userId, role);
+  }
+
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @Post('admin/register')
+  async register(@Body() dto: LoginDto) {
+    return this.authService.register(dto);
+  }
+
+
+  @Get('admin/profile')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  async profile(@Request() req) {
+    return this.authService.getProfile(req.user.id, req.user.role);
   }
 }

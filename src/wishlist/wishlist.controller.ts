@@ -16,7 +16,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
 @Controller('wishlist')
 export class WishlistController {
-  constructor(private readonly wishlistService: WishlistService) {}
+  constructor(private readonly wishlistService: WishlistService) { }
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -33,15 +33,17 @@ export class WishlistController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete()
-  removeFromWishlist(@Query('id') id: string, @Request() req) {
-    const profile_id = req.user.id;
-    return this.wishlistService.removeFromWishlist(id, profile_id);
-  }
-
-  @Delete()
+  @Delete('all/clear')
   clearWishlist(@Request() req) {
     const profile_id = req.user.id;
     return this.wishlistService.clearWishlist(profile_id);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(":id")
+  removeFromWishlist(@Param('id') id: string, @Request() req) {
+    const profile_id = req.user.id;
+    return this.wishlistService.removeFromWishlist(id, profile_id);
+  }
+
 }

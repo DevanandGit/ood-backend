@@ -33,8 +33,9 @@ let AuthService = class AuthService {
                     email: loginDto.email,
                     otp: otp,
                     expiresAt: new Date(Date.now() + 10 * 60 * 1000),
-                    role: client_1.Roles.CUSTOMER,
+                    role: client_1.Role.CUSTOMER,
                     is_verified: false,
+                    CustomerProfile: { create: {} }
                 }
             });
         }
@@ -47,15 +48,7 @@ let AuthService = class AuthService {
                 }
             });
         }
-        await this.mailerService.sendMail({
-            to: loginDto.email,
-            subject: 'Login OTP',
-            template: 'authentication',
-            context: {
-                otp,
-            },
-        });
-        return { message: 'OTP sent successfully' };
+        return { message: 'OTP sent successfully', data: otp };
     }
     async verifyOtp(email, otp) {
         let user = await this.prisma.user.findUnique({ where: { email } });
@@ -78,7 +71,7 @@ let AuthService = class AuthService {
             else {
                 return {
                     user,
-                    accessToken: this.jwtService.sign({ sub: user.id, email: user.email }),
+                    accessToken: this.jwtService.sign({ sub: user.id, email: user.email, role: user.role }),
                     message: 'User registered successfully',
                     status: 201,
                 };
@@ -90,16 +83,48 @@ let AuthService = class AuthService {
     }
     ;
     async getAdminProfile(id, role) {
-        if (role !== client_1.Roles.ADMIN) {
+        if (role !== client_1.Role.ADMIN) {
             throw new common_1.ForbiddenException('Profile cannot be accessed');
         }
         return this.usersService.AdminProfile(id);
     }
     async getCustomerProfile(id, role) {
-        if (role === client_1.Roles.CUSTOMER) {
+        if (role === client_1.Role.CUSTOMER) {
             throw new common_1.ForbiddenException('Profile cannot be accessed');
         }
         return this.usersService.CustomerProfile(id);
+    }
+    async register(dto) {
+        const otp = (0, utils_1.generate6DigitOtp)();
+        let user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+        if (!user) {
+            await this.prisma.user.create({
+                data: {
+                    email: dto.email,
+                    otp: otp,
+                    expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+                    role: client_1.Role.ADMIN,
+                    is_verified: false,
+                    AdminProfile: { create: {} }
+                }
+            });
+        }
+        else {
+            user = await this.prisma.user.update({
+                where: { email: dto.email },
+                data: {
+                    otp: otp,
+                    expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+                }
+            });
+        }
+        return { message: 'OTP sent successfully', data: otp };
+    }
+    async getProfile(id, role) {
+        if (role !== client_1.Role.ADMIN) {
+            throw new common_1.ForbiddenException('Access denied');
+        }
+        return this.prisma.adminProfile.findUnique({ where: { userId: id } });
     }
 };
 exports.AuthService = AuthService;
