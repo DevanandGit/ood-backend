@@ -69,6 +69,9 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   async profile(@Request() req) {
-    return this.authService.getProfile(req.user.id, req.user.role);
+    return this.authService.getAdminProfile(req.user.id, req.user.role);
   }
+
+
+
 }

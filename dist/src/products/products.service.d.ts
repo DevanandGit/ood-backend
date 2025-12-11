@@ -16,11 +16,11 @@ export declare class ProductService {
         }[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         description: string | null;
         isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         discountedPrice: import("@prisma/client/runtime/library").Decimal;
         actualPrice: import("@prisma/client/runtime/library").Decimal;
         stockCount: number;
@@ -31,13 +31,13 @@ export declare class ProductService {
         data: ({
             category: {
                 id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 name: string;
                 description: string | null;
                 image: string | null;
-                parentId: string | null;
                 isActive: boolean;
-                createdAt: Date;
-                updatedAt: Date;
+                parentId: string | null;
             };
             images: {
                 id: string;
@@ -49,11 +49,11 @@ export declare class ProductService {
             }[];
         } & {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             name: string;
             description: string | null;
             isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
             stockCount: number;
@@ -68,13 +68,13 @@ export declare class ProductService {
     findOne(id: string): Promise<{
         category: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             name: string;
             description: string | null;
             image: string | null;
-            parentId: string | null;
             isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
+            parentId: string | null;
         };
         images: {
             id: string;
@@ -86,11 +86,11 @@ export declare class ProductService {
         }[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         description: string | null;
         isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         discountedPrice: import("@prisma/client/runtime/library").Decimal;
         actualPrice: import("@prisma/client/runtime/library").Decimal;
         stockCount: number;
@@ -108,11 +108,11 @@ export declare class ProductService {
         }[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         description: string | null;
         isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         discountedPrice: import("@prisma/client/runtime/library").Decimal;
         actualPrice: import("@prisma/client/runtime/library").Decimal;
         stockCount: number;
@@ -121,11 +121,11 @@ export declare class ProductService {
     }>;
     remove(id: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         name: string;
         description: string | null;
         isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
         discountedPrice: import("@prisma/client/runtime/library").Decimal;
         actualPrice: import("@prisma/client/runtime/library").Decimal;
         stockCount: number;

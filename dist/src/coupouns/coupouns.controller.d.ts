@@ -6,6 +6,8 @@ export declare class CouponController {
     constructor(couponService: CouponService);
     create(dto: CreateCouponDto): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         couponName: string;
         ValueType: import(".prisma/client").$Enums.CoupounValueType;
         Value: string;
@@ -14,11 +16,11 @@ export declare class CouponController {
         usageLimitPerPerson: number;
         validFrom: string;
         ValidTill: string;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     findAll(onlyValid?: string, onlyExpired?: string, minSpent?: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         couponName: string;
         ValueType: import(".prisma/client").$Enums.CoupounValueType;
         Value: string;
@@ -27,11 +29,11 @@ export declare class CouponController {
         usageLimitPerPerson: number;
         validFrom: string;
         ValidTill: string;
-        createdAt: Date;
-        updatedAt: Date;
     }[]>;
     findOne(id: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         couponName: string;
         ValueType: import(".prisma/client").$Enums.CoupounValueType;
         Value: string;
@@ -40,11 +42,11 @@ export declare class CouponController {
         usageLimitPerPerson: number;
         validFrom: string;
         ValidTill: string;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     update(id: string, dto: UpdateCouponDto): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         couponName: string;
         ValueType: import(".prisma/client").$Enums.CoupounValueType;
         Value: string;
@@ -53,11 +55,11 @@ export declare class CouponController {
         usageLimitPerPerson: number;
         validFrom: string;
         ValidTill: string;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     remove(id: string): Promise<{
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         couponName: string;
         ValueType: import(".prisma/client").$Enums.CoupounValueType;
         Value: string;
@@ -66,8 +68,6 @@ export declare class CouponController {
         usageLimitPerPerson: number;
         validFrom: string;
         ValidTill: string;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     findApplicableCoupons(req: any): Promise<any[]>;
     applyCoupon(coupoun_id: string, req: any): Promise<{

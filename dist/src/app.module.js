@@ -30,6 +30,7 @@ const address_module_1 = require("./address/address.module");
 const notifications_module_1 = require("./notifications/notifications.module");
 const firebase_module_1 = require("./firebase/firebase.module");
 const device_token_module_1 = require("./token/device-token.module");
+const serve_static_1 = require("@nestjs/serve-static");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -78,6 +79,13 @@ exports.AppModule = AppModule = __decorate([
                     options: {
                         strict: true,
                     },
+                }
+            }),
+            serve_static_1.ServeStaticModule.forRoot({
+                rootPath: (0, path_1.join)(process.cwd(), 'uploads'),
+                serveRoot: "/uploads",
+                serveStaticOptions: {
+                    index: false,
                 }
             }),
         ],

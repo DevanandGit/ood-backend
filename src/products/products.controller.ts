@@ -28,8 +28,8 @@ import { Role } from '@prisma/client';
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.ADMIN)
   @Post()
   @UseInterceptors(
     FilesInterceptor('images', 10, {

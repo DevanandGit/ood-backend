@@ -16,27 +16,27 @@ export declare class ProductController {
         }[];
     } & {
         id: string;
-        name: string;
-        discountedPrice: import("@prisma/client/runtime/library").Decimal;
-        actualPrice: import("@prisma/client/runtime/library").Decimal;
-        description: string | null;
-        stockCount: number;
-        isStock: boolean;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
+        isActive: boolean;
+        discountedPrice: import("@prisma/client/runtime/library").Decimal;
+        actualPrice: import("@prisma/client/runtime/library").Decimal;
+        stockCount: number;
+        isStock: boolean;
         categoryId: string;
     }>;
     findAll(query: ProductQueryDto): Promise<{
         data: ({
             category: {
                 id: string;
-                name: string;
-                description: string | null;
-                isActive: boolean;
                 createdAt: Date;
                 updatedAt: Date;
+                name: string;
+                description: string | null;
                 image: string | null;
+                isActive: boolean;
                 parentId: string | null;
             };
             images: {
@@ -49,15 +49,15 @@ export declare class ProductController {
             }[];
         } & {
             id: string;
-            name: string;
-            discountedPrice: import("@prisma/client/runtime/library").Decimal;
-            actualPrice: import("@prisma/client/runtime/library").Decimal;
-            description: string | null;
-            stockCount: number;
-            isStock: boolean;
-            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
+            isActive: boolean;
+            discountedPrice: import("@prisma/client/runtime/library").Decimal;
+            actualPrice: import("@prisma/client/runtime/library").Decimal;
+            stockCount: number;
+            isStock: boolean;
             categoryId: string;
         })[];
         total: number;
@@ -68,12 +68,12 @@ export declare class ProductController {
     findOne(id: string): Promise<{
         category: {
             id: string;
-            name: string;
-            description: string | null;
-            isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            description: string | null;
             image: string | null;
+            isActive: boolean;
             parentId: string | null;
         };
         images: {
@@ -86,15 +86,15 @@ export declare class ProductController {
         }[];
     } & {
         id: string;
-        name: string;
-        discountedPrice: import("@prisma/client/runtime/library").Decimal;
-        actualPrice: import("@prisma/client/runtime/library").Decimal;
-        description: string | null;
-        stockCount: number;
-        isStock: boolean;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
+        isActive: boolean;
+        discountedPrice: import("@prisma/client/runtime/library").Decimal;
+        actualPrice: import("@prisma/client/runtime/library").Decimal;
+        stockCount: number;
+        isStock: boolean;
         categoryId: string;
     }>;
     update(id: string, updateProductDto: UpdateProductDto, files: Express.Multer.File[]): Promise<{
@@ -108,28 +108,28 @@ export declare class ProductController {
         }[];
     } & {
         id: string;
-        name: string;
-        discountedPrice: import("@prisma/client/runtime/library").Decimal;
-        actualPrice: import("@prisma/client/runtime/library").Decimal;
-        description: string | null;
-        stockCount: number;
-        isStock: boolean;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
+        isActive: boolean;
+        discountedPrice: import("@prisma/client/runtime/library").Decimal;
+        actualPrice: import("@prisma/client/runtime/library").Decimal;
+        stockCount: number;
+        isStock: boolean;
         categoryId: string;
     }>;
     remove(id: string): Promise<{
         id: string;
-        name: string;
-        discountedPrice: import("@prisma/client/runtime/library").Decimal;
-        actualPrice: import("@prisma/client/runtime/library").Decimal;
-        description: string | null;
-        stockCount: number;
-        isStock: boolean;
-        isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        name: string;
+        description: string | null;
+        isActive: boolean;
+        discountedPrice: import("@prisma/client/runtime/library").Decimal;
+        actualPrice: import("@prisma/client/runtime/library").Decimal;
+        stockCount: number;
+        isStock: boolean;
         categoryId: string;
     }>;
 }

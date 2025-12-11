@@ -22,6 +22,7 @@ import { AddressModule } from './address/address.module';
 import { NotificationModule } from './notifications/notifications.module';
 import { FirebaseModule } from './firebase/firebase.module';
 import { DeviceTokenModule } from './token/device-token.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -68,6 +69,13 @@ import { DeviceTokenModule } from './token/device-token.module';
         options: {
           strict: true,
         },
+      }
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'uploads'),
+      serveRoot: "/uploads",
+      serveStaticOptions: {
+        index: false,
       }
     }),
   ],

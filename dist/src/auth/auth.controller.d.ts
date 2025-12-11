@@ -117,7 +117,12 @@ export declare class AuthController {
     }>;
     profile(req: any): Promise<{
         id: string;
-        userId: string;
-        notes: string | null;
+        email: string;
+        role: import(".prisma/client").$Enums.Role;
+        createdAt: Date;
+        updatedAt: Date;
+        AdminProfile: {
+            notes: string;
+        };
     }>;
 }

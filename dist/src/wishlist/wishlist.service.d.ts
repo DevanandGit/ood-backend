@@ -11,20 +11,20 @@ export declare class WishlistService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            description: string | null;
+            isActive: boolean;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
-            description: string | null;
             stockCount: number;
             isStock: boolean;
-            isActive: boolean;
             categoryId: string;
         };
     } & {
         id: string;
-        customerProfileId: string;
-        productId: string;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
+        customerProfileId: string;
     }>;
     getWishlist(userId: string, pagination: PaginationDto): Promise<PaginationResponseDto<{
         product: {
@@ -32,27 +32,27 @@ export declare class WishlistService {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            description: string | null;
+            isActive: boolean;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
-            description: string | null;
             stockCount: number;
             isStock: boolean;
-            isActive: boolean;
             categoryId: string;
         };
     } & {
         id: string;
-        customerProfileId: string;
-        productId: string;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
+        customerProfileId: string;
     }>>;
     removeFromWishlist(id: string, userId: string): Promise<{
         id: string;
-        customerProfileId: string;
-        productId: string;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
+        customerProfileId: string;
     }>;
     clearWishlist(userId: string): Promise<import(".prisma/client").Prisma.BatchPayload>;
 }

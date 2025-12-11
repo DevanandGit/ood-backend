@@ -49,8 +49,6 @@ let ProductController = class ProductController {
 };
 exports.ProductController = ProductController;
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
     (0, common_1.Post)(),
     (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('images', 10, {
         storage: (0, multer_1.diskStorage)({

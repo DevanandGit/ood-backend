@@ -48,6 +48,14 @@ let AuthService = class AuthService {
                 }
             });
         }
+        await this.mailerService.sendMail({
+            to: loginDto.email,
+            subject: 'Login OTP',
+            template: 'authentication',
+            context: {
+                otp,
+            },
+        });
         return { message: 'OTP sent successfully', data: otp };
     }
     async verifyOtp(email, otp) {
@@ -89,7 +97,7 @@ let AuthService = class AuthService {
         return this.usersService.AdminProfile(id);
     }
     async getCustomerProfile(id, role) {
-        if (role === client_1.Role.CUSTOMER) {
+        if (role != client_1.Role.CUSTOMER) {
             throw new common_1.ForbiddenException('Profile cannot be accessed');
         }
         return this.usersService.CustomerProfile(id);

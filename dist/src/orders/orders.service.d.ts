@@ -18,11 +18,11 @@ export declare class OrdersService {
         }[];
         shippingAddress: {
             id: string;
-            name: string;
             createdAt: Date;
             updatedAt: Date;
-            address: string;
+            name: string;
             customerProfileId: string;
+            address: string;
             city: string;
             state: string;
             postalCode: string;
@@ -43,8 +43,8 @@ export declare class OrdersService {
         shippingCost: import("@prisma/client/runtime/library").Decimal;
         taxAmount: import("@prisma/client/runtime/library").Decimal;
         discountAmount: import("@prisma/client/runtime/library").Decimal;
-        shippingAddressId: string | null;
         trackingID: string | null;
+        shippingAddressId: string | null;
     }>;
     findAll(pagination: PaginationDto, profile_id: string): Promise<PaginationResponseDto<{
         items: {
@@ -57,11 +57,11 @@ export declare class OrdersService {
         }[];
         shippingAddress: {
             id: string;
-            name: string;
             createdAt: Date;
             updatedAt: Date;
-            address: string;
+            name: string;
             customerProfileId: string;
+            address: string;
             city: string;
             state: string;
             postalCode: string;
@@ -82,8 +82,8 @@ export declare class OrdersService {
         shippingCost: import("@prisma/client/runtime/library").Decimal;
         taxAmount: import("@prisma/client/runtime/library").Decimal;
         discountAmount: import("@prisma/client/runtime/library").Decimal;
-        shippingAddressId: string | null;
         trackingID: string | null;
+        shippingAddressId: string | null;
     }>>;
     findOne(id: string): Promise<{
         items: {
@@ -96,11 +96,11 @@ export declare class OrdersService {
         }[];
         shippingAddress: {
             id: string;
-            name: string;
             createdAt: Date;
             updatedAt: Date;
-            address: string;
+            name: string;
             customerProfileId: string;
+            address: string;
             city: string;
             state: string;
             postalCode: string;
@@ -121,8 +121,8 @@ export declare class OrdersService {
         shippingCost: import("@prisma/client/runtime/library").Decimal;
         taxAmount: import("@prisma/client/runtime/library").Decimal;
         discountAmount: import("@prisma/client/runtime/library").Decimal;
-        shippingAddressId: string | null;
         trackingID: string | null;
+        shippingAddressId: string | null;
     }>;
     update(id: string, updateOrderDto: UpdateOrderDto): Promise<{
         items: {
@@ -135,11 +135,11 @@ export declare class OrdersService {
         }[];
         shippingAddress: {
             id: string;
-            name: string;
             createdAt: Date;
             updatedAt: Date;
-            address: string;
+            name: string;
             customerProfileId: string;
+            address: string;
             city: string;
             state: string;
             postalCode: string;
@@ -160,8 +160,8 @@ export declare class OrdersService {
         shippingCost: import("@prisma/client/runtime/library").Decimal;
         taxAmount: import("@prisma/client/runtime/library").Decimal;
         discountAmount: import("@prisma/client/runtime/library").Decimal;
-        shippingAddressId: string | null;
         trackingID: string | null;
+        shippingAddressId: string | null;
     }>;
     remove(id: string): Promise<{
         id: string;
@@ -176,8 +176,8 @@ export declare class OrdersService {
         shippingCost: import("@prisma/client/runtime/library").Decimal;
         taxAmount: import("@prisma/client/runtime/library").Decimal;
         discountAmount: import("@prisma/client/runtime/library").Decimal;
-        shippingAddressId: string | null;
         trackingID: string | null;
+        shippingAddressId: string | null;
     }>;
     findByUser(profile_id: string): Promise<({
         items: {
@@ -190,11 +190,11 @@ export declare class OrdersService {
         }[];
         shippingAddress: {
             id: string;
-            name: string;
             createdAt: Date;
             updatedAt: Date;
-            address: string;
+            name: string;
             customerProfileId: string;
+            address: string;
             city: string;
             state: string;
             postalCode: string;
@@ -215,8 +215,8 @@ export declare class OrdersService {
         shippingCost: import("@prisma/client/runtime/library").Decimal;
         taxAmount: import("@prisma/client/runtime/library").Decimal;
         discountAmount: import("@prisma/client/runtime/library").Decimal;
-        shippingAddressId: string | null;
         trackingID: string | null;
+        shippingAddressId: string | null;
     })[]>;
     updateStatus(id: string, status: OrderStatus): Promise<{
         id: string;
@@ -231,8 +231,8 @@ export declare class OrdersService {
         shippingCost: import("@prisma/client/runtime/library").Decimal;
         taxAmount: import("@prisma/client/runtime/library").Decimal;
         discountAmount: import("@prisma/client/runtime/library").Decimal;
-        shippingAddressId: string | null;
         trackingID: string | null;
+        shippingAddressId: string | null;
     }>;
     updateTrackingDetails(orderId: string, trackingDetails: string): Promise<{
         items: {
@@ -245,11 +245,11 @@ export declare class OrdersService {
         }[];
         shippingAddress: {
             id: string;
-            name: string;
             createdAt: Date;
             updatedAt: Date;
-            address: string;
+            name: string;
             customerProfileId: string;
+            address: string;
             city: string;
             state: string;
             postalCode: string;
@@ -270,7 +270,7 @@ export declare class OrdersService {
         shippingCost: import("@prisma/client/runtime/library").Decimal;
         taxAmount: import("@prisma/client/runtime/library").Decimal;
         discountAmount: import("@prisma/client/runtime/library").Decimal;
-        shippingAddressId: string | null;
         trackingID: string | null;
+        shippingAddressId: string | null;
     }>;
 }

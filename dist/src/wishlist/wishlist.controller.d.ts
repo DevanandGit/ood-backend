@@ -10,20 +10,20 @@ export declare class WishlistController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            description: string | null;
+            isActive: boolean;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
-            description: string | null;
             stockCount: number;
             isStock: boolean;
-            isActive: boolean;
             categoryId: string;
         };
     } & {
         id: string;
-        customerProfileId: string;
-        productId: string;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
+        customerProfileId: string;
     }>;
     getWishlist(req: any, pagination: PaginationDto): Promise<import("../pagination/pagination-response.dto").PaginationResponseDto<{
         product: {
@@ -31,27 +31,27 @@ export declare class WishlistController {
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            description: string | null;
+            isActive: boolean;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
-            description: string | null;
             stockCount: number;
             isStock: boolean;
-            isActive: boolean;
             categoryId: string;
         };
     } & {
         id: string;
-        customerProfileId: string;
-        productId: string;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
+        customerProfileId: string;
     }>>;
     clearWishlist(req: any): Promise<import(".prisma/client").Prisma.BatchPayload>;
     removeFromWishlist(id: string, req: any): Promise<{
         id: string;
-        customerProfileId: string;
-        productId: string;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
+        customerProfileId: string;
     }>;
 }

@@ -46,7 +46,7 @@ let AuthController = class AuthController {
         return this.authService.register(dto);
     }
     async profile(req) {
-        return this.authService.getProfile(req.user.id, req.user.role);
+        return this.authService.getAdminProfile(req.user.id, req.user.role);
     }
 };
 exports.AuthController = AuthController;

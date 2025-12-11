@@ -97,7 +97,7 @@ export class AuthService {
   }
 
   async getCustomerProfile(id: string, role: string) {
-    if (role === Role.CUSTOMER) {
+    if (role != Role.CUSTOMER) {
       throw new ForbiddenException('Profile cannot be accessed');
     }
     return this.usersService.CustomerProfile(id);
@@ -149,4 +149,6 @@ export class AuthService {
     }
     return this.prisma.adminProfile.findUnique({ where: { userId: id } });
   }
+
+
 }

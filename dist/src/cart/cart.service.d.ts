@@ -12,40 +12,40 @@ export declare class CartService {
         product: {
             images: {
                 id: string;
-                productId: string;
                 url: string;
                 altText: string | null;
                 isMain: boolean;
                 sortOrder: number;
+                productId: string;
             }[];
         } & {
             id: string;
             createdAt: Date;
             updatedAt: Date;
             name: string;
+            description: string | null;
+            isActive: boolean;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
-            description: string | null;
             stockCount: number;
             isStock: boolean;
-            isActive: boolean;
             categoryId: string;
         };
     } & {
         id: string;
-        productId: string;
-        quantity: number;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
         customerProfileId: string | null;
+        quantity: number;
     })[]>;
     updateCartItem(userId: string, cartItemId: string, updateCartDto: UpdateCartDto): Promise<{
         id: string;
-        productId: string;
-        quantity: number;
         createdAt: Date;
         updatedAt: Date;
+        productId: string;
         customerProfileId: string | null;
+        quantity: number;
     }>;
     deletecart(userId: string, cartItemId: string): Promise<{
         message: string;
