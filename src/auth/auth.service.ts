@@ -45,14 +45,14 @@ export class AuthService {
         }
       });
     }
-    // await this.mailerService.sendMail({
-    //   to: loginDto.email,
-    //   subject: 'Login OTP',
-    //   template: 'authentication', // ✅ refers to authentication.pug
-    //   context: {
-    //     otp, // ✅ available inside the template
-    //   },
-    // });
+    await this.mailerService.sendMail({
+      to: loginDto.email,
+      subject: 'Login OTP',
+      template: 'authentication', // ✅ refers to authentication.pug
+      context: {
+        otp, // ✅ available inside the template
+      },
+    });
     return { message: 'OTP sent successfully', data: otp };
   }
 
