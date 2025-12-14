@@ -51,6 +51,7 @@ model User {
   expiresAt   DateTime?
   password    String?
   is_verified Boolean   @default(false)
+  is_active   Boolean   @default(true)
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
   lastLogin   DateTime?
@@ -63,9 +64,11 @@ model User {
 }
 
 model CustomerProfile {
-  id     String @id @default(uuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   addresses    Address[]
   reviews      Review[]
@@ -77,9 +80,11 @@ model CustomerProfile {
 }
 
 model AdminProfile {
-  id     String @id @default(uuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   notes String? // any internal notes about the admin
 }
@@ -126,12 +131,14 @@ model Product {
 }
 
 model ProductImage {
-  id        String  @id @default(uuid())
+  id        String   @id @default(uuid())
   productId String
   url       String
   altText   String?
-  isMain    Boolean @default(false)
-  sortOrder Int     @default(0)
+  isMain    Boolean  @default(false)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
@@ -178,12 +185,14 @@ model Order {
 }
 
 model OrderItem {
-  id              String  @id @default(uuid())
+  id              String   @id @default(uuid())
   orderId         String
   productId       String
   quantity        Int
-  discountedPrice Decimal @db.Decimal(10, 2)
-  actualPrice     Decimal @db.Decimal(10, 2)
+  discountedPrice Decimal  @db.Decimal(10, 2)
+  actualPrice     Decimal  @db.Decimal(10, 2)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id])
@@ -234,6 +243,8 @@ model BankDetails {
   accountHolderName String
   ifscCode          String
   CustomerProfile   CustomerProfile? @relation(fields: [customerProfileId], references: [id], onDelete: Cascade)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 }
 
 model Review {
@@ -271,6 +282,8 @@ model CouponUsage {
   couponId          String
   customerProfileId String?
   usedAt            DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   coupon          Coupon           @relation(fields: [couponId], references: [id])
   CustomerProfile CustomerProfile? @relation(fields: [customerProfileId], references: [id])
@@ -294,6 +307,9 @@ model NotifyMe {
   id        String  @id @default(uuid())
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Notification {

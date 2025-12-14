@@ -12,11 +12,13 @@ export declare class CartService {
         product: {
             images: {
                 id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                productId: string;
                 url: string;
                 altText: string | null;
                 isMain: boolean;
                 sortOrder: number;
-                productId: string;
             }[];
         } & {
             id: string;

@@ -20,6 +20,8 @@ const update_orders_dto_1 = require("./dto/update-orders.dto");
 const client_1 = require("@prisma/client");
 const pagination_dto_1 = require("../pagination/dto/pagination.dto");
 const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
+const fetch_orders_dto_1 = require("./dto/fetch-orders.dto");
+const update_order_status_dto_1 = require("./dto/update-order-status.dto");
 let OrdersController = class OrdersController {
     constructor(ordersService) {
         this.ordersService = ordersService;
@@ -48,6 +50,12 @@ let OrdersController = class OrdersController {
     }
     async updateTrackingDetails(orderId, trackingDetails) {
         return this.ordersService.updateTrackingDetails(orderId, trackingDetails);
+    }
+    getOrders(dto) {
+        return this.ordersService.getOrders(dto);
+    }
+    updateOrderStatus(orderId, dto) {
+        return this.ordersService.updateOrderStatus(orderId, dto);
     }
 };
 exports.OrdersController = OrdersController;
@@ -112,6 +120,21 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "updateTrackingDetails", null);
+__decorate([
+    (0, common_1.Get)('admin/list'),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [fetch_orders_dto_1.OrderFilterDto]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "getOrders", null);
+__decorate([
+    (0, common_1.Patch)(':orderId/status'),
+    __param(0, (0, common_1.Param)('orderId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_order_status_dto_1.UpdateOrderStatusDto]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "updateOrderStatus", null);
 exports.OrdersController = OrdersController = __decorate([
     (0, common_1.Controller)('orders'),
     __metadata("design:paramtypes", [orders_service_1.OrdersService])

@@ -11,8 +11,9 @@ import {
   UseInterceptors,
   Query,
   UseGuards,
+  UploadedFile,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ProductService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -23,6 +24,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
+import { imageUploadConfig } from './dto/multer.config';
 
 @Controller('products')
 export class ProductController {
@@ -92,5 +94,40 @@ export class ProductController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productService.remove(id);
+  }
+
+  @Post(':productId/images')
+  @UseInterceptors(FilesInterceptor('images', 10, imageUploadConfig))
+  uploadImages(
+    @Param('productId') productId: string,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body('mainIndex') mainIndex?: string,
+    @Body('altTexts') altTexts?: string[] | string,
+  ) {
+    return this.productService.addImages(
+      productId,
+      files,
+      mainIndex ? Number(mainIndex) : undefined,
+      altTexts,
+    );
+  }
+
+  @Patch(':imageId')
+  @UseInterceptors(FileInterceptor('image', imageUploadConfig))
+  updateImage(
+    @Param('imageId') imageId: string,
+    @UploadedFile() file?: Express.Multer.File,
+    @Body() body?: {
+      altText?: string;
+      isMain?: string;
+      sortOrder?: string;
+    },
+  ) {
+    return this.productService.updateImage(imageId, file, body);
+  }
+
+  @Delete(':imageId')
+  deleteImage(@Param('imageId') imageId: string) {
+    return this.productService.deleteImage(imageId);
   }
 }

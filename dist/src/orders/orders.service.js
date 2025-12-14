@@ -16,6 +16,15 @@ const pagination_response_dto_1 = require("../pagination/pagination-response.dto
 let OrdersService = class OrdersService {
     constructor(prisma) {
         this.prisma = prisma;
+        this.allowedTransitions = {
+            pending: ['confirmed', 'cancelled'],
+            confirmed: ['processing', 'cancelled'],
+            processing: ['shipped', 'cancelled'],
+            shipped: ['delivered'],
+            delivered: ['refunded'],
+            cancelled: [],
+            refunded: [],
+        };
     }
     async create(createOrderDto) {
         const { items, ...orderData } = createOrderDto;
@@ -132,6 +141,75 @@ let OrdersService = class OrdersService {
                 shippingAddress: true,
             },
         });
+    }
+    async getOrders(dto) {
+        const { status, categoryId, startDate, endDate, page, limit } = dto;
+        const where = {};
+        if (status) {
+            where.status = status;
+        }
+        if (startDate || endDate) {
+            where.createdAt = {
+                ...(startDate && { gte: new Date(startDate) }),
+                ...(endDate && { lte: new Date(endDate) }),
+            };
+        }
+        if (categoryId) {
+            where.items = {
+                some: {
+                    product: {
+                        categoryId,
+                    },
+                },
+            };
+        }
+        const [orders, total] = await Promise.all([
+            this.prisma.order.findMany({
+                where,
+                skip: (page - 1) * limit,
+                take: limit,
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    items: {
+                        include: {
+                            product: {
+                                include: {
+                                    category: true,
+                                },
+                            },
+                        },
+                    },
+                    CustomerProfile: true,
+                    Payment: true,
+                },
+            }),
+            this.prisma.order.count({ where }),
+        ]);
+        return new pagination_response_dto_1.PaginationResponseDto(orders, total, page, limit);
+    }
+    async updateOrderStatus(orderId, dto) {
+        const order = await this.prisma.order.findUnique({
+            where: { id: orderId },
+        });
+        if (!order) {
+            throw new common_1.NotFoundException('Order not found');
+        }
+        const currentStatus = order.status;
+        const nextStatus = dto.status;
+        if (!this.allowedTransitions[currentStatus].includes(nextStatus)) {
+            throw new common_1.BadRequestException(`Invalid status transition from ${currentStatus} to ${nextStatus}`);
+        }
+        const updatedOrder = await this.prisma.order.update({
+            where: { id: orderId },
+            data: {
+                status: nextStatus,
+                ...(dto.notes && { notes: dto.notes }),
+            },
+        });
+        return {
+            message: 'Order status updated successfully',
+            order: updatedOrder,
+        };
     }
 };
 exports.OrdersService = OrdersService;

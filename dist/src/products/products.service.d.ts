@@ -8,11 +8,13 @@ export declare class ProductService {
     create(dto: CreateProductDto, imagePaths: string[]): Promise<{
         images: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            productId: string;
             url: string;
             altText: string | null;
             isMain: boolean;
             sortOrder: number;
-            productId: string;
         }[];
     } & {
         id: string;
@@ -36,16 +38,18 @@ export declare class ProductService {
                 name: string;
                 description: string | null;
                 image: string | null;
-                isActive: boolean;
                 parentId: string | null;
+                isActive: boolean;
             };
             images: {
                 id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                productId: string;
                 url: string;
                 altText: string | null;
                 isMain: boolean;
                 sortOrder: number;
-                productId: string;
             }[];
         } & {
             id: string;
@@ -73,16 +77,18 @@ export declare class ProductService {
             name: string;
             description: string | null;
             image: string | null;
-            isActive: boolean;
             parentId: string | null;
+            isActive: boolean;
         };
         images: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            productId: string;
             url: string;
             altText: string | null;
             isMain: boolean;
             sortOrder: number;
-            productId: string;
         }[];
     } & {
         id: string;
@@ -100,11 +106,13 @@ export declare class ProductService {
     update(id: string, dto: UpdateProductDto, imagePaths?: string[]): Promise<{
         images: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            productId: string;
             url: string;
             altText: string | null;
             isMain: boolean;
             sortOrder: number;
-            productId: string;
         }[];
     } & {
         id: string;
@@ -131,5 +139,26 @@ export declare class ProductService {
         stockCount: number;
         isStock: boolean;
         categoryId: string;
+    }>;
+    addImages(productId: string, files: Express.Multer.File[], mainIndex?: number, altTexts?: string[] | string): Promise<{
+        message: string;
+        uploadedCount: number;
+    }>;
+    updateImage(imageId: string, file?: Express.Multer.File, body?: {
+        altText?: string;
+        isMain?: string;
+        sortOrder?: string;
+    }): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        productId: string;
+        url: string;
+        altText: string | null;
+        isMain: boolean;
+        sortOrder: number;
+    }>;
+    deleteImage(imageId: string): Promise<{
+        message: string;
     }>;
 }

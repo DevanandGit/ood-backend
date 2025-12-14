@@ -31,6 +31,7 @@ const notifications_module_1 = require("./notifications/notifications.module");
 const firebase_module_1 = require("./firebase/firebase.module");
 const device_token_module_1 = require("./token/device-token.module");
 const serve_static_1 = require("@nestjs/serve-static");
+const analytics_module_1 = require("./analytics/analytics.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -54,6 +55,7 @@ exports.AppModule = AppModule = __decorate([
             orders_module_1.OrdersModule,
             address_module_1.AddressModule,
             notifications_module_1.NotificationModule,
+            analytics_module_1.AnalyticsModule,
             firebase_module_1.FirebaseModule,
             device_token_module_1.DeviceTokenModule,
             razorpay_module_1.RazorpayModule.forRoot({

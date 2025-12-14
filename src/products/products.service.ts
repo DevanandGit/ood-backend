@@ -1,9 +1,10 @@
 // src/product/product.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductQueryDto } from './dto/ product-query.dto';
+import * as fs from 'fs';
 
 @Injectable()
 export class ProductService {
@@ -126,4 +127,142 @@ export class ProductService {
     await this.findOne(id);
     return this.prisma.product.delete({ where: { id } });
   }
+
+  async addImages(
+    productId: string,
+    files: Express.Multer.File[],
+    mainIndex?: number,
+    altTexts?: string[] | string,
+  ) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    const altTextArray = Array.isArray(altTexts)
+      ? altTexts
+      : altTexts
+        ? [altTexts]
+        : [];
+
+    const imageData = files.map((file, index) => ({
+      productId,
+      url: `/uploads/products/${file.filename}`,
+      altText: altTextArray[index] || null,
+      isMain: mainIndex === index,
+      sortOrder: index,
+    }));
+
+    // If a new main image is set → unset old main image
+    if (mainIndex !== undefined) {
+      await this.prisma.productImage.updateMany({
+        where: { productId, isMain: true },
+        data: { isMain: false },
+      });
+    }
+
+    await this.prisma.productImage.createMany({
+      data: imageData,
+    });
+
+    return {
+      message: 'Product images uploaded successfully',
+      uploadedCount: files.length,
+    };
+  }
+
+
+  async updateImage(
+    imageId: string,
+    file?: Express.Multer.File,
+    body?: {
+      altText?: string;
+      isMain?: string;
+      sortOrder?: string;
+    },
+  ) {
+    const image = await this.prisma.productImage.findUnique({
+      where: { id: imageId },
+    });
+
+    if (!image) {
+      throw new NotFoundException('Product image not found');
+    }
+
+    // If setting new main image → unset previous main
+    if (body?.isMain === 'true') {
+      await this.prisma.productImage.updateMany({
+        where: {
+          productId: image.productId,
+          isMain: true,
+        },
+        data: { isMain: false },
+      });
+    }
+
+    // Delete old file if replacing image
+    let newUrl: string | undefined;
+    if (file) {
+      if (image.url && fs.existsSync(`.${image.url}`)) {
+        fs.unlinkSync(`.${image.url}`);
+      }
+      newUrl = `/uploads/products/${file.filename}`;
+    }
+
+    return this.prisma.productImage.update({
+      where: { id: imageId },
+      data: {
+        ...(newUrl && { url: newUrl }),
+        ...(body?.altText && { altText: body.altText }),
+        ...(body?.isMain !== undefined && {
+          isMain: body.isMain === 'true',
+        }),
+        ...(body?.sortOrder !== undefined && {
+          sortOrder: Number(body.sortOrder),
+        }),
+      },
+    });
+  }
+
+
+  async deleteImage(imageId: string) {
+    const image = await this.prisma.productImage.findUnique({
+      where: { id: imageId },
+    });
+
+    if (!image) {
+      throw new NotFoundException('Product image not found');
+    }
+
+    // Prevent deleting main image if it's the only image
+    const totalImages = await this.prisma.productImage.count({
+      where: { productId: image.productId },
+    });
+
+    if (image.isMain && totalImages > 1) {
+      throw new BadRequestException(
+        'Please set another image as main before deleting this one',
+      );
+    }
+
+    // Delete file from disk
+    if (image.url && fs.existsSync(`.${image.url}`)) {
+      fs.unlinkSync(`.${image.url}`);
+    }
+
+    await this.prisma.productImage.delete({
+      where: { id: imageId },
+    });
+
+    return {
+      message: 'Product image deleted successfully',
+    };
+  }
+
+
+
+
 }

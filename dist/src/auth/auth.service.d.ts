@@ -16,14 +16,15 @@ export declare class AuthService {
     verifyOtp(email: string, otp: string): Promise<{
         user: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             email: string;
             role: import(".prisma/client").$Enums.Role;
             otp: string | null;
             expiresAt: Date | null;
             password: string | null;
             is_verified: boolean;
-            createdAt: Date;
-            updatedAt: Date;
+            is_active: boolean;
             lastLogin: Date | null;
         };
         accessToken: string;
@@ -32,18 +33,16 @@ export declare class AuthService {
     }>;
     getAdminProfile(id: string, role: string): Promise<{
         id: string;
-        email: string;
-        role: import(".prisma/client").$Enums.Role;
         createdAt: Date;
         updatedAt: Date;
+        email: string;
+        role: import(".prisma/client").$Enums.Role;
         AdminProfile: {
             notes: string;
         };
     }>;
     getCustomerProfile(id: string, role: string): Promise<{
         id: string;
-        email: string;
-        role: import(".prisma/client").$Enums.Role;
         createdAt: Date;
         updatedAt: Date;
         CustomerProfile: {
@@ -52,8 +51,8 @@ export declare class AuthService {
                 createdAt: Date;
                 updatedAt: Date;
                 name: string;
-                address: string;
                 customerProfileId: string;
+                address: string;
                 city: string;
                 state: string;
                 postalCode: string;
@@ -65,23 +64,23 @@ export declare class AuthService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                customerProfileId: string | null;
                 productId: string;
+                customerProfileId: string | null;
                 rating: number;
                 comment: string | null;
             }[];
             couponUsages: {
                 id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 customerProfileId: string | null;
-                couponId: string;
                 usedAt: Date;
+                couponId: string;
             }[];
             orders: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                notes: string | null;
-                customerProfileId: string | null;
                 orderNumber: string;
                 status: import(".prisma/client").$Enums.OrderStatus;
                 paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
@@ -89,19 +88,23 @@ export declare class AuthService {
                 shippingCost: import("@prisma/client/runtime/library").Decimal;
                 taxAmount: import("@prisma/client/runtime/library").Decimal;
                 discountAmount: import("@prisma/client/runtime/library").Decimal;
+                notes: string | null;
                 shippingAddressId: string | null;
                 trackingID: string | null;
+                customerProfileId: string | null;
             }[];
             cart: {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                customerProfileId: string | null;
                 productId: string;
+                customerProfileId: string | null;
                 quantity: number;
             }[];
             BankDetails: {
                 id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 customerProfileId: string | null;
                 accountNumber: string;
                 accountHolderName: string;
@@ -111,10 +114,12 @@ export declare class AuthService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                customerProfileId: string;
                 productId: string;
+                customerProfileId: string;
             }[];
         };
+        email: string;
+        role: import(".prisma/client").$Enums.Role;
     }>;
     register(dto: LoginDto): Promise<{
         message: string;
@@ -123,6 +128,8 @@ export declare class AuthService {
     getProfile(id: string, role: string): Promise<{
         id: string;
         userId: string;
+        createdAt: Date;
+        updatedAt: Date;
         notes: string | null;
     }>;
 }

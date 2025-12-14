@@ -23,6 +23,7 @@ import { NotificationModule } from './notifications/notifications.module';
 import { FirebaseModule } from './firebase/firebase.module';
 import { DeviceTokenModule } from './token/device-token.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     OrdersModule,
     AddressModule,
     NotificationModule,
+    AnalyticsModule,
     FirebaseModule,
     DeviceTokenModule,
 

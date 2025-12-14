@@ -4,15 +4,13 @@ export declare class UsersService {
     constructor(prisma: PrismaService);
     findAll(role?: string): Promise<{
         id: string;
-        email: string;
-        role: import(".prisma/client").$Enums.Role;
         createdAt: Date;
         updatedAt: Date;
+        email: string;
+        role: import(".prisma/client").$Enums.Role;
     }[]>;
     CustomerProfile(id: string): Promise<{
         id: string;
-        email: string;
-        role: import(".prisma/client").$Enums.Role;
         createdAt: Date;
         updatedAt: Date;
         CustomerProfile: {
@@ -35,12 +33,14 @@ export declare class UsersService {
                 createdAt: Date;
                 updatedAt: Date;
                 productId: string;
+                customerProfileId: string | null;
                 rating: number;
                 comment: string | null;
-                customerProfileId: string | null;
             }[];
             couponUsages: {
                 id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 customerProfileId: string | null;
                 usedAt: Date;
                 couponId: string;
@@ -49,8 +49,6 @@ export declare class UsersService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                notes: string | null;
-                customerProfileId: string | null;
                 orderNumber: string;
                 status: import(".prisma/client").$Enums.OrderStatus;
                 paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
@@ -58,8 +56,10 @@ export declare class UsersService {
                 shippingCost: import("@prisma/client/runtime/library").Decimal;
                 taxAmount: import("@prisma/client/runtime/library").Decimal;
                 discountAmount: import("@prisma/client/runtime/library").Decimal;
-                trackingID: string | null;
+                notes: string | null;
                 shippingAddressId: string | null;
+                trackingID: string | null;
+                customerProfileId: string | null;
             }[];
             cart: {
                 id: string;
@@ -71,6 +71,8 @@ export declare class UsersService {
             }[];
             BankDetails: {
                 id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 customerProfileId: string | null;
                 accountNumber: string;
                 accountHolderName: string;
@@ -84,20 +86,21 @@ export declare class UsersService {
                 customerProfileId: string;
             }[];
         };
+        email: string;
+        role: import(".prisma/client").$Enums.Role;
     }>;
     AdminProfile(id: string): Promise<{
         id: string;
-        email: string;
-        role: import(".prisma/client").$Enums.Role;
         createdAt: Date;
         updatedAt: Date;
+        email: string;
+        role: import(".prisma/client").$Enums.Role;
         AdminProfile: {
             notes: string;
         };
     }>;
     findByEmail(email: string): Promise<{
         id: string;
-        role: import(".prisma/client").$Enums.Role;
         createdAt: Date;
         updatedAt: Date;
         CustomerProfile: {
@@ -120,12 +123,14 @@ export declare class UsersService {
                 createdAt: Date;
                 updatedAt: Date;
                 productId: string;
+                customerProfileId: string | null;
                 rating: number;
                 comment: string | null;
-                customerProfileId: string | null;
             }[];
             couponUsages: {
                 id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 customerProfileId: string | null;
                 usedAt: Date;
                 couponId: string;
@@ -134,8 +139,6 @@ export declare class UsersService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                notes: string | null;
-                customerProfileId: string | null;
                 orderNumber: string;
                 status: import(".prisma/client").$Enums.OrderStatus;
                 paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
@@ -143,8 +146,10 @@ export declare class UsersService {
                 shippingCost: import("@prisma/client/runtime/library").Decimal;
                 taxAmount: import("@prisma/client/runtime/library").Decimal;
                 discountAmount: import("@prisma/client/runtime/library").Decimal;
-                trackingID: string | null;
+                notes: string | null;
                 shippingAddressId: string | null;
+                trackingID: string | null;
+                customerProfileId: string | null;
             }[];
             cart: {
                 id: string;
@@ -156,6 +161,8 @@ export declare class UsersService {
             }[];
             BankDetails: {
                 id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 customerProfileId: string | null;
                 accountNumber: string;
                 accountHolderName: string;
@@ -169,6 +176,7 @@ export declare class UsersService {
                 customerProfileId: string;
             }[];
         };
+        role: import(".prisma/client").$Enums.Role;
     }>;
     remove(id: string): Promise<{
         message: string;

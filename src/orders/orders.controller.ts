@@ -18,6 +18,8 @@ import { PaginationDto } from 'src/pagination/dto/pagination.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { OrderFilterDto } from './dto/fetch-orders.dto';
+import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) { }
@@ -66,5 +68,19 @@ export class OrdersController {
     @Param('trackingDetails') trackingDetails: string,
   ) {
     return this.ordersService.updateTrackingDetails(orderId, trackingDetails);
+  }
+
+  @Get('admin/list')
+  getOrders(@Query() dto: OrderFilterDto) {
+    return this.ordersService.getOrders(dto);
+  }
+
+
+  @Patch(':orderId/status')
+  updateOrderStatus(
+    @Param('orderId') orderId: string,
+    @Body() dto: UpdateOrderStatusDto,
+  ) {
+    return this.ordersService.updateOrderStatus(orderId, dto);
   }
 }

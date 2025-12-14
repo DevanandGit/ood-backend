@@ -8,6 +8,8 @@ export declare class RazorpayController {
         order: {
             items: {
                 id: string;
+                createdAt: Date;
+                updatedAt: Date;
                 discountedPrice: import("@prisma/client/runtime/library").Decimal;
                 actualPrice: import("@prisma/client/runtime/library").Decimal;
                 productId: string;
@@ -18,8 +20,6 @@ export declare class RazorpayController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            notes: string | null;
-            customerProfileId: string | null;
             orderNumber: string;
             status: import(".prisma/client").$Enums.OrderStatus;
             paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
@@ -27,8 +27,10 @@ export declare class RazorpayController {
             shippingCost: import("@prisma/client/runtime/library").Decimal;
             taxAmount: import("@prisma/client/runtime/library").Decimal;
             discountAmount: import("@prisma/client/runtime/library").Decimal;
-            trackingID: string | null;
+            notes: string | null;
             shippingAddressId: string | null;
+            trackingID: string | null;
+            customerProfileId: string | null;
         };
         razorpayOrder: import("razorpay/dist/types/orders").Orders.RazorpayOrder;
     }>;
@@ -46,8 +48,6 @@ export declare class RazorpayController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            notes: string | null;
-            customerProfileId: string | null;
             orderNumber: string;
             status: import(".prisma/client").$Enums.OrderStatus;
             paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
@@ -55,8 +55,10 @@ export declare class RazorpayController {
             shippingCost: import("@prisma/client/runtime/library").Decimal;
             taxAmount: import("@prisma/client/runtime/library").Decimal;
             discountAmount: import("@prisma/client/runtime/library").Decimal;
-            trackingID: string | null;
+            notes: string | null;
             shippingAddressId: string | null;
+            trackingID: string | null;
+            customerProfileId: string | null;
         };
         message?: undefined;
     }>;

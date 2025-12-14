@@ -25,6 +25,7 @@ const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
 const roles_guard_1 = require("../common/guards/roles.guard");
 const roles_decorator_1 = require("../common/decorators/roles.decorator");
 const client_1 = require("@prisma/client");
+const multer_config_1 = require("./dto/multer.config");
 let ProductController = class ProductController {
     constructor(productService) {
         this.productService = productService;
@@ -45,6 +46,15 @@ let ProductController = class ProductController {
     }
     remove(id) {
         return this.productService.remove(id);
+    }
+    uploadImages(productId, files, mainIndex, altTexts) {
+        return this.productService.addImages(productId, files, mainIndex ? Number(mainIndex) : undefined, altTexts);
+    }
+    updateImage(imageId, file, body) {
+        return this.productService.updateImage(imageId, file, body);
+    }
+    deleteImage(imageId) {
+        return this.productService.deleteImage(imageId);
     }
 };
 exports.ProductController = ProductController;
@@ -108,6 +118,34 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)(':productId/images'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('images', 10, multer_config_1.imageUploadConfig)),
+    __param(0, (0, common_1.Param)('productId')),
+    __param(1, (0, common_1.UploadedFiles)()),
+    __param(2, (0, common_1.Body)('mainIndex')),
+    __param(3, (0, common_1.Body)('altTexts')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Array, String, Object]),
+    __metadata("design:returntype", void 0)
+], ProductController.prototype, "uploadImages", null);
+__decorate([
+    (0, common_1.Patch)(':imageId'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image', multer_config_1.imageUploadConfig)),
+    __param(0, (0, common_1.Param)('imageId')),
+    __param(1, (0, common_1.UploadedFile)()),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", void 0)
+], ProductController.prototype, "updateImage", null);
+__decorate([
+    (0, common_1.Delete)(':imageId'),
+    __param(0, (0, common_1.Param)('imageId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ProductController.prototype, "deleteImage", null);
 exports.ProductController = ProductController = __decorate([
     (0, common_1.Controller)('products'),
     __metadata("design:paramtypes", [products_service_1.ProductService])
