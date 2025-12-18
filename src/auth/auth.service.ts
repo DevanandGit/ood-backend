@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   ForbiddenException,
   ConflictException,
+  HttpStatus,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
@@ -10,7 +11,9 @@ import { UsersService } from '../users/users.service';
 import { Role } from '@prisma/client';
 import { generate6DigitOtp } from 'src/common/utility/utils';
 import { MailerService } from '@nestjs-modules/mailer';
-import { LoginDto } from './dto/login.dto';
+import { AdminLoginDto, LoginDto } from './dto/login.dto';
+import * as bcrypt from 'bcryptjs';
+
 
 @Injectable()
 export class AuthService {
@@ -104,42 +107,84 @@ export class AuthService {
   }
 
 
+  async register(dto: AdminLoginDto) {
+    const { email, password } = dto;
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email },
+    });
 
-  /** REGISTER ADMIN */
-  async register(dto: LoginDto) {
-    const otp = generate6DigitOtp();
-    let user = await this.prisma.user.findUnique({ where: { email: dto.email } });
-    if (!user) {
-      await this.prisma.user.create({
-        data: {
-          email: dto.email,
-          otp: otp,
-          expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes from now
-          role: Role.ADMIN,
-          is_verified: false,
-          AdminProfile: { create: {} }
-        }
-      });
+    if (existingUser) {
+      throw new ConflictException('User already exists');
     }
-    else {
-      user = await this.prisma.user.update({
-        where: { email: dto.email },
-        data: {
-          otp: otp,
-          expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes from now
-        }
-      });
-    }
-    // await this.mailerService.sendMail({
-    //   to: loginDto.email,
-    //   subject: 'Login OTP',
-    //   template: 'authentication', // ✅ refers to authentication.pug
-    //   context: {
-    //     otp, // ✅ available inside the template
-    //   },
-    // });
-    return { message: 'OTP sent successfully', data: otp };
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await this.prisma.user.create({
+      data: {
+        email: email,
+        password: hashedPassword,
+        role: Role.ADMIN,
+        AdminProfile: { create: {} }
+      }
+    })
+
+    const token = this.jwtService.sign({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    return {
+      message: 'User registered successfully',
+      data: {
+        access_token: token,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        },
+      },
+      status: HttpStatus.CREATED,
+    };
   }
+
+  async Adminlogin(dto: AdminLoginDto) {
+    const { email, password } = dto;
+
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      include: { AdminProfile: true },
+    });
+
+    if (!user || !user.password) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const token = this.jwtService.sign({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    return {
+      message: 'Login successful',
+      data: {
+        access_token: token,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        },
+      },
+      status: HttpStatus.OK,
+    };
+  }
+
 
 
   /** PROFILE */

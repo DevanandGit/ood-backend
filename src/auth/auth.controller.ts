@@ -13,7 +13,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
+import { AdminLoginDto, LoginDto } from './dto/login.dto';
 import { OtpVerifyDto } from './dto/otp-verify.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
@@ -57,13 +57,19 @@ export class AuthController {
   }
 
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.ADMIN)
   @Post('admin/register')
-  async register(@Body() dto: LoginDto) {
+  async register(@Body() dto: AdminLoginDto) {
     return this.authService.register(dto);
   }
 
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.ADMIN)
+  @Post('admin/login')
+  async AdminLogin(@Body() dto: AdminLoginDto) {
+    return this.authService.Adminlogin(dto);
+  }
 
   @Get('admin/profile')
   @UseGuards(JwtAuthGuard, RolesGuard)

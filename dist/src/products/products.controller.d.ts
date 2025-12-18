@@ -25,7 +25,7 @@ export declare class ProductController {
         isActive: boolean;
         discountedPrice: import("@prisma/client/runtime/library").Decimal;
         actualPrice: import("@prisma/client/runtime/library").Decimal;
-        stockCount: number;
+        totalstockCount: number;
         isStock: boolean;
         categoryId: string;
     }>;
@@ -51,6 +51,10 @@ export declare class ProductController {
                 isMain: boolean;
                 sortOrder: number;
             }[];
+            sizeAndQuantities: {
+                quantity: number;
+                size: string;
+            }[];
         } & {
             id: string;
             createdAt: Date;
@@ -60,7 +64,7 @@ export declare class ProductController {
             isActive: boolean;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
-            stockCount: number;
+            totalstockCount: number;
             isStock: boolean;
             categoryId: string;
         })[];
@@ -99,7 +103,7 @@ export declare class ProductController {
         isActive: boolean;
         discountedPrice: import("@prisma/client/runtime/library").Decimal;
         actualPrice: import("@prisma/client/runtime/library").Decimal;
-        stockCount: number;
+        totalstockCount: number;
         isStock: boolean;
         categoryId: string;
     }>;
@@ -123,7 +127,7 @@ export declare class ProductController {
         isActive: boolean;
         discountedPrice: import("@prisma/client/runtime/library").Decimal;
         actualPrice: import("@prisma/client/runtime/library").Decimal;
-        stockCount: number;
+        totalstockCount: number;
         isStock: boolean;
         categoryId: string;
     }>;
@@ -136,7 +140,7 @@ export declare class ProductController {
         isActive: boolean;
         discountedPrice: import("@prisma/client/runtime/library").Decimal;
         actualPrice: import("@prisma/client/runtime/library").Decimal;
-        stockCount: number;
+        totalstockCount: number;
         isStock: boolean;
         categoryId: string;
     }>;

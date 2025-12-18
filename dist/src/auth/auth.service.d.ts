@@ -1,8 +1,9 @@
+import { HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { MailerService } from '@nestjs-modules/mailer';
-import { LoginDto } from './dto/login.dto';
+import { AdminLoginDto, LoginDto } from './dto/login.dto';
 export declare class AuthService {
     private readonly prisma;
     private readonly usersService;
@@ -100,6 +101,7 @@ export declare class AuthService {
                 productId: string;
                 customerProfileId: string | null;
                 quantity: number;
+                sizeId: string;
             }[];
             BankDetails: {
                 id: string;
@@ -121,9 +123,29 @@ export declare class AuthService {
         email: string;
         role: import(".prisma/client").$Enums.Role;
     }>;
-    register(dto: LoginDto): Promise<{
+    register(dto: AdminLoginDto): Promise<{
         message: string;
-        data: string;
+        data: {
+            access_token: string;
+            user: {
+                id: string;
+                email: string;
+                role: import(".prisma/client").$Enums.Role;
+            };
+        };
+        status: HttpStatus;
+    }>;
+    Adminlogin(dto: AdminLoginDto): Promise<{
+        message: string;
+        data: {
+            access_token: string;
+            user: {
+                id: string;
+                email: string;
+                role: import(".prisma/client").$Enums.Role;
+            };
+        };
+        status: HttpStatus;
     }>;
     getProfile(id: string, role: string): Promise<{
         id: string;

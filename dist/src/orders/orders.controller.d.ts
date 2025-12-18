@@ -314,7 +314,7 @@ export declare class OrdersController {
                 isActive: boolean;
                 discountedPrice: import("@prisma/client/runtime/library").Decimal;
                 actualPrice: import("@prisma/client/runtime/library").Decimal;
-                stockCount: number;
+                totalstockCount: number;
                 isStock: boolean;
                 categoryId: string;
             };

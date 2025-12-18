@@ -14,7 +14,7 @@ export declare class WishlistController {
             isActive: boolean;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
-            stockCount: number;
+            totalstockCount: number;
             isStock: boolean;
             categoryId: string;
         };
@@ -35,7 +35,7 @@ export declare class WishlistController {
             isActive: boolean;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
-            stockCount: number;
+            totalstockCount: number;
             isStock: boolean;
             categoryId: string;
         };

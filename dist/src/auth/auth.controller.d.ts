@@ -1,5 +1,5 @@
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
+import { AdminLoginDto, LoginDto } from './dto/login.dto';
 import { OtpVerifyDto } from './dto/otp-verify.dto';
 export declare class AuthController {
     private readonly authService;
@@ -95,6 +95,7 @@ export declare class AuthController {
                 productId: string;
                 customerProfileId: string | null;
                 quantity: number;
+                sizeId: string;
             }[];
             BankDetails: {
                 id: string;
@@ -116,9 +117,29 @@ export declare class AuthController {
         email: string;
         role: import(".prisma/client").$Enums.Role;
     }>;
-    register(dto: LoginDto): Promise<{
+    register(dto: AdminLoginDto): Promise<{
         message: string;
-        data: string;
+        data: {
+            access_token: string;
+            user: {
+                id: string;
+                email: string;
+                role: import(".prisma/client").$Enums.Role;
+            };
+        };
+        status: import("@nestjs/common").HttpStatus;
+    }>;
+    AdminLogin(dto: AdminLoginDto): Promise<{
+        message: string;
+        data: {
+            access_token: string;
+            user: {
+                id: string;
+                email: string;
+                role: import(".prisma/client").$Enums.Role;
+            };
+        };
+        status: import("@nestjs/common").HttpStatus;
     }>;
     profile(req: any): Promise<{
         id: string;

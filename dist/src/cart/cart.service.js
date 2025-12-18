@@ -17,54 +17,82 @@ let CartService = class CartService {
         this.prisma = prisma;
     }
     async addToCart(userId, addToCartDto) {
-        const { productId, quantity } = addToCartDto;
-        const product = await this.prisma.product.findFirst({
-            where: { id: productId, isStock: true },
-        });
-        if (!product) {
-            throw new common_1.NotFoundException('Product not found or inactive');
+        const { quantity, sizeId } = addToCartDto;
+        if (quantity <= 0) {
+            throw new common_1.BadRequestException('Quantity must be greater than zero');
         }
-        if (product.stockCount < quantity) {
-            throw new common_1.BadRequestException('Insufficient stock available');
-        }
-        const customerProfile = await this.prisma.customerProfile.findUnique({
-            where: { userId },
-        });
-        if (!customerProfile) {
-            throw new common_1.NotFoundException('Customer profile not found');
-        }
-        const existingCartItem = await this.prisma.cartItem.findUnique({
-            where: {
-                customerProfileId_productId: {
-                    customerProfileId: customerProfile.id,
-                    productId: productId,
+        return this.prisma.$transaction(async (tx) => {
+            const product = await tx.product.findFirst({
+                where: {
+                    id: addToCartDto.productId,
+                    isActive: true,
+                    isStock: true,
                 },
-            },
-        });
-        let cartItem;
-        if (existingCartItem) {
-            cartItem = await this.prisma.cartItem.update({
-                where: { id: existingCartItem.id },
-                data: { quantity: existingCartItem.quantity + quantity },
             });
-        }
-        else {
-            cartItem = await this.prisma.cartItem.create({
+            if (!product) {
+                throw new common_1.NotFoundException('Product not found or inactive');
+            }
+            const customerProfile = await tx.customerProfile.findUnique({
+                where: { userId },
+            });
+            if (!customerProfile) {
+                throw new common_1.NotFoundException('Customer profile not found');
+            }
+            const size = await tx.sizeAndQuantity.findFirst({
+                where: {
+                    id: sizeId,
+                    productId: addToCartDto.productId,
+                },
+            });
+            if (!size) {
+                throw new common_1.NotFoundException('Invalid size for this product');
+            }
+            if (size.quantity < quantity) {
+                throw new common_1.BadRequestException('Insufficient stock for selected size');
+            }
+            const existingCartItem = await tx.cartItem.findFirst({
+                where: {
+                    customerProfileId: customerProfile.id,
+                    productId: addToCartDto.productId,
+                    sizeId,
+                },
+            });
+            let cartItem;
+            if (existingCartItem) {
+                cartItem = await tx.cartItem.update({
+                    where: { id: existingCartItem.id },
+                    data: {
+                        quantity: existingCartItem.quantity + quantity,
+                    },
+                });
+            }
+            else {
+                cartItem = await tx.cartItem.create({
+                    data: {
+                        productId: addToCartDto.productId,
+                        sizeId,
+                        quantity,
+                        customerProfileId: customerProfile.id,
+                    },
+                });
+            }
+            await tx.sizeAndQuantity.update({
+                where: { id: sizeId },
                 data: {
-                    productId,
-                    quantity,
-                    customerProfileId: customerProfile.id,
+                    quantity: { decrement: quantity },
                 },
             });
-        }
-        await this.prisma.product.update({
-            where: { id: productId },
-            data: { stockCount: { decrement: quantity } },
+            await tx.product.update({
+                where: { id: addToCartDto.productId, },
+                data: {
+                    totalstockCount: { decrement: quantity },
+                },
+            });
+            return {
+                message: 'Product added to cart successfully',
+                cartItem,
+            };
         });
-        return {
-            message: 'Product added to cart successfully',
-            cartItem,
-        };
     }
     async getCart(userId) {
         const customerProfile = await this.prisma.customerProfile.findUnique({

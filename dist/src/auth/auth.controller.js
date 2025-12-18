@@ -45,6 +45,9 @@ let AuthController = class AuthController {
     async register(dto) {
         return this.authService.register(dto);
     }
+    async AdminLogin(dto) {
+        return this.authService.Adminlogin(dto);
+    }
     async profile(req) {
         return this.authService.getAdminProfile(req.user.id, req.user.role);
     }
@@ -83,14 +86,19 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "getCustomerProfile", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
     (0, common_1.Post)('admin/register'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [login_dto_1.LoginDto]),
+    __metadata("design:paramtypes", [login_dto_1.AdminLoginDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)('admin/login'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [login_dto_1.AdminLoginDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "AdminLogin", null);
 __decorate([
     (0, common_1.Get)('admin/profile'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),

@@ -55,4 +55,21 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "categoryId", void 0);
+__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (!value)
+            return {};
+        if (typeof value === 'string') {
+            try {
+                return JSON.parse(value);
+            }
+            catch {
+                return {};
+            }
+        }
+        return value;
+    }),
+    (0, class_validator_1.IsObject)(),
+    __metadata("design:type", Object)
+], CreateProductDto.prototype, "sizeAndQuantity", void 0);
 //# sourceMappingURL=create-product.dto.js.map

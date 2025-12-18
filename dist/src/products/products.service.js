@@ -51,16 +51,22 @@ let ProductService = class ProductService {
         this.prisma = prisma;
     }
     async create(dto, imagePaths) {
+        const sizeEntries = Object.entries(dto.sizeAndQuantity ?? {}).map(([size, quantity]) => ({
+            size,
+            quantity: Number(quantity) || 0
+        }));
+        const totalstockCount = sizeEntries.reduce((sum, item) => sum + item.quantity, 0);
         return this.prisma.product.create({
             data: {
                 name: dto.name,
                 discountedPrice: dto.discountedPrice,
                 actualPrice: dto.actualPrice,
                 description: dto.description,
-                stockCount: dto.stockCount ?? 0,
+                totalstockCount: totalstockCount,
                 isStock: dto.isStock ?? true,
                 isActive: dto.isActive ?? true,
                 categoryId: dto.categoryId,
+                sizeAndQuantities: { create: sizeEntries },
                 images: {
                     create: imagePaths.map((url, idx) => ({
                         url,
@@ -76,21 +82,42 @@ let ProductService = class ProductService {
         const page = Number(query.page) || 1;
         const limit = Number(query.limit) || 10;
         const skip = (page - 1) * limit;
-        const where = {};
+        const where = {
+            isActive: true,
+        };
         if (query.search) {
-            where.OR = [
-                { name: { contains: query.search, mode: 'insensitive' } },
-                { description: { contains: query.search, mode: 'insensitive' } },
-            ];
+            where.name = {
+                contains: query.search,
+                mode: 'insensitive',
+            };
         }
         if (query.categoryId) {
             where.categoryId = query.categoryId;
         }
-        if (query.isActive !== undefined) {
-            where.isActive = query.isActive === 'true';
+        if (query.minPrice || query.maxPrice) {
+            where.discountedPrice = {};
+            if (query.minPrice) {
+                where.discountedPrice.gte = Number(query.minPrice);
+            }
+            if (query.maxPrice) {
+                where.discountedPrice.lte = Number(query.maxPrice);
+            }
         }
         if (query.isStock !== undefined) {
             where.isStock = query.isStock === 'true';
+        }
+        if (query.isActive !== undefined) {
+            where.isActive = query.isActive === 'true';
+        }
+        if (query.size) {
+            where.sizeAndQuantities = {
+                some: {
+                    size: query.size,
+                    quantity: {
+                        gt: 0,
+                    },
+                },
+            };
         }
         const [products, total] = await this.prisma.$transaction([
             this.prisma.product.findMany({
@@ -100,6 +127,12 @@ let ProductService = class ProductService {
                 include: {
                     images: true,
                     category: true,
+                    sizeAndQuantities: {
+                        select: {
+                            size: true,
+                            quantity: true,
+                        },
+                    },
                 },
                 orderBy: { createdAt: 'desc' },
             }),

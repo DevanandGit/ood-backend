@@ -1,203 +1,219 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import { PrismaClient, Role, PaymentMethod, PaymentStatus, OrderStatus, CoupounValueType } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 async function main() {
+    console.log('🌱 Seeding database...');
 
-    console.log('Seeding database...')
-
-    // ===================== USERS ======================
+    /* ===================== USERS ===================== */
     const adminUser = await prisma.user.create({
         data: {
             email: 'admin@example.com',
-            role: 'ADMIN',
-            is_verified: true
-        }
-    })
+            role: Role.ADMIN,
+            is_verified: true,
+        },
+    });
 
     const customerUser = await prisma.user.create({
         data: {
             email: 'customer@example.com',
-            role: 'CUSTOMER',
-            is_verified: true
-        }
-    })
+            role: Role.CUSTOMER,
+            is_verified: true,
+        },
+    });
 
-    // ===================== PROFILES ======================
+    /* ===================== PROFILES ===================== */
     const adminProfile = await prisma.adminProfile.create({
-        data: { userId: adminUser.id }
-    })
+        data: {
+            userId: adminUser.id,
+        },
+    });
 
     const customerProfile = await prisma.customerProfile.create({
-        data: { userId: customerUser.id }
-    })
+        data: {
+            userId: customerUser.id,
+        },
+    });
 
-    // ===================== CATEGORY ======================
+    /* ===================== CATEGORY ===================== */
     const category = await prisma.category.create({
         data: {
             name: 'Electronics',
-            description: 'Electronic gadgets and devices'
-        }
-    })
+            description: 'Electronic gadgets and devices',
+        },
+    });
 
-    // ====================== PRODUCT ======================
+    /* ===================== PRODUCT ===================== */
     const product = await prisma.product.create({
         data: {
             name: 'Smartphone',
             actualPrice: 1000,
             discountedPrice: 900,
-            stockCount: 10,
+            totalstockCount: 10,
             description: 'Latest smartphone',
             categoryId: category.id,
-        }
-    })
+        },
+    });
 
-    // ==================== PRODUCT IMAGES ====================
+    /* ===================== PRODUCT SIZE ===================== */
+    const sizeM = await prisma.sizeAndQuantity.create({
+        data: {
+            productId: product.id,
+            size: 'M',
+            quantity: 10,
+        },
+    });
+
+    /* ===================== PRODUCT IMAGE ===================== */
     await prisma.productImage.create({
         data: {
             productId: product.id,
             url: 'https://example.com/product1.png',
-            isMain: true
-        }
-    })
+            isMain: true,
+        },
+    });
 
-    // ==================== REVIEW ==========================
+    /* ===================== REVIEW ===================== */
     await prisma.review.create({
         data: {
             customerProfileId: customerProfile.id,
             productId: product.id,
             rating: 5,
-            comment: "Excellent!"
-        }
-    })
+            comment: 'Excellent!',
+        },
+    });
 
-    // ==================== CART ============================
+    /* ===================== CART ===================== */
     await prisma.cartItem.create({
         data: {
             customerProfileId: customerProfile.id,
             productId: product.id,
-            quantity: 1
-        }
-    })
+            sizeId: sizeM.id,
+            quantity: 1,
+        },
+    });
 
-    // ====================== COUPON =========================
+    /* ===================== COUPON ===================== */
     const coupon = await prisma.coupon.create({
         data: {
             couponName: 'WELCOME10',
-            ValueType: 'percentage',
+            ValueType: CoupounValueType.percentage,
             Value: '10',
             minimumSpent: 500,
             validFrom: new Date().toISOString(),
             ValidTill: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(),
-        }
-    })
+        },
+    });
 
     await prisma.couponUsage.create({
         data: {
             customerProfileId: customerProfile.id,
-            couponId: coupon.id
-        }
-    })
+            couponId: coupon.id,
+        },
+    });
 
-    // ==================== ADDRESS =========================
+    /* ===================== ADDRESS ===================== */
     const address = await prisma.address.create({
         data: {
-            name: "Home",
-            address: "123 Main Street",
-            city: "Mumbai",
-            state: "MH",
-            postalCode: "400001",
-            country: "India",
-            phone: "9999999999",
+            name: 'Home',
+            address: '123 Main Street',
+            city: 'Mumbai',
+            state: 'MH',
+            postalCode: '400001',
+            country: 'India',
+            phone: '9999999999',
             isDefault: true,
-            customerProfileId: customerProfile.id
-        }
-    })
+            customerProfileId: customerProfile.id,
+        },
+    });
 
-    // ===================== ORDER ==========================
+    /* ===================== ORDER ===================== */
     const order = await prisma.order.create({
         data: {
             orderNumber: 'ORDER001',
+            status: OrderStatus.confirmed,
+            paymentStatus: PaymentStatus.completed,
             totalAmount: 900,
             shippingCost: 50,
             taxAmount: 20,
             discountAmount: 100,
             shippingAddressId: address.id,
-            customerProfileId: customerProfile.id
-        }
-    })
+            customerProfileId: customerProfile.id,
+        },
+    });
 
-    // ================== ORDER ITEMS =======================
+    /* ===================== ORDER ITEM ===================== */
     await prisma.orderItem.create({
         data: {
             orderId: order.id,
             productId: product.id,
             quantity: 1,
             actualPrice: 1000,
-            discountedPrice: 900
-        }
-    })
+            discountedPrice: 900,
+        },
+    });
 
-    // ================== PAYMENTS ==========================
+    /* ===================== PAYMENT ===================== */
     await prisma.payment.create({
         data: {
             orderId: order.id,
             amount: 900,
-            status: 'completed',
-            method: 'credit_card',
-            transactionId: 'TXN12345'
-        }
-    })
+            status: PaymentStatus.completed,
+            method: PaymentMethod.credit_card,
+            transactionId: 'TXN12345',
+        },
+    });
 
-    // ===================== BANK ===========================
+    /* ===================== BANK DETAILS ===================== */
     await prisma.bankDetails.create({
         data: {
             customerProfileId: customerProfile.id,
             accountNumber: '1234567890',
             accountHolderName: 'John Customer',
-            ifscCode: 'SBIN000111'
-        }
-    })
+            ifscCode: 'SBIN000111',
+        },
+    });
 
-    // ===================== WISHLIST =======================
+    /* ===================== WISHLIST ===================== */
     await prisma.wishlist.create({
         data: {
             customerProfileId: customerProfile.id,
             productId: product.id,
-        }
-    })
+        },
+    });
 
-    // ===================== NOTIFY ME ======================
+    /* ===================== NOTIFY ME ===================== */
     await prisma.notifyMe.create({
         data: {
             productId: product.id,
-        }
-    })
+        },
+    });
 
-    // ===================== NOTIFICATION ======================
+    /* ===================== NOTIFICATION ===================== */
     await prisma.notification.create({
         data: {
             userId: adminUser.id,
             title: 'Welcome Admin',
             body: 'Your admin account is created.',
-        }
-    })
+        },
+    });
 
-    // ===================== DEVICE TOKEN ======================
+    /* ===================== DEVICE TOKEN ===================== */
     await prisma.deviceToken.create({
         data: {
             userId: customerUser.id,
             token: 'dummy-device-token',
-        }
-    })
+        },
+    });
 
-    console.log("🌱 Seed complete!")
+    console.log('✅ Seed completed successfully');
 }
 
-
 main()
-    .then(async () => await prisma.$disconnect())
     .catch(async (e) => {
-        console.error(e);
-        await prisma.$disconnect();
-        process.exit(1)
+        console.error('❌ Seed failed:', e);
+        process.exit(1);
     })
+    .finally(async () => {
+        await prisma.$disconnect();
+    });

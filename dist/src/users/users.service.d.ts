@@ -68,6 +68,7 @@ export declare class UsersService {
                 productId: string;
                 customerProfileId: string | null;
                 quantity: number;
+                sizeId: string;
             }[];
             BankDetails: {
                 id: string;
@@ -158,6 +159,7 @@ export declare class UsersService {
                 productId: string;
                 customerProfileId: string | null;
                 quantity: number;
+                sizeId: string;
             }[];
             BankDetails: {
                 id: string;

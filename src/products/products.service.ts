@@ -11,16 +11,26 @@ export class ProductService {
   constructor(private prisma: PrismaService) { }
 
   async create(dto: CreateProductDto, imagePaths: string[]) {
+
+    const sizeEntries = Object.entries(dto.sizeAndQuantity ?? {}).map(
+      ([size, quantity]) => ({
+        size,
+        quantity: Number(quantity) || 0
+      })
+    )
+
+    const totalstockCount = sizeEntries.reduce((sum, item) => sum + item.quantity, 0)
     return this.prisma.product.create({
       data: {
         name: dto.name,
         discountedPrice: dto.discountedPrice,
         actualPrice: dto.actualPrice,
         description: dto.description,
-        stockCount: dto.stockCount ?? 0,
+        totalstockCount: totalstockCount,
         isStock: dto.isStock ?? true,
         isActive: dto.isActive ?? true,
         categoryId: dto.categoryId,
+        sizeAndQuantities: { create: sizeEntries },
         images: {
           create: imagePaths.map((url, idx) => ({
             url,
@@ -39,32 +49,68 @@ export class ProductService {
     const limit = Number(query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: any = {
+      isActive: true, // default safeguard
+    };
 
-    // 🔎 Search by name or description
+    /* =========================
+       🔎 Search by product name
+       ========================= */
     if (query.search) {
-      where.OR = [
-        { name: { contains: query.search, mode: 'insensitive' } },
-        { description: { contains: query.search, mode: 'insensitive' } },
-      ];
+      where.name = {
+        contains: query.search,
+        mode: 'insensitive',
+      };
     }
 
-    // 🗂 Filter by categoryId
+    /* =========================
+       🗂 Category filter
+       ========================= */
     if (query.categoryId) {
       where.categoryId = query.categoryId;
     }
 
-    // ✅ Filter by active status
-    if (query.isActive !== undefined) {
-      where.isActive = query.isActive === 'true';
+    /* =========================
+       💰 Price range filter
+       ========================= */
+    if (query.minPrice || query.maxPrice) {
+      where.discountedPrice = {};
+      if (query.minPrice) {
+        where.discountedPrice.gte = Number(query.minPrice);
+      }
+      if (query.maxPrice) {
+        where.discountedPrice.lte = Number(query.maxPrice);
+      }
     }
 
-    // ✅ Filter by stock status
+    /* =========================
+       📦 Stock filter
+       ========================= */
     if (query.isStock !== undefined) {
       where.isStock = query.isStock === 'true';
     }
 
-    // 📝 Execute the query
+    if (query.isActive !== undefined) {
+      where.isActive = query.isActive === 'true';
+    }
+
+    /* =========================
+       📐 Size filter
+       ========================= */
+    if (query.size) {
+      where.sizeAndQuantities = {
+        some: {
+          size: query.size,
+          quantity: {
+            gt: 0,
+          },
+        },
+      };
+    }
+
+    /* =========================
+       📝 Execute transaction
+       ========================= */
     const [products, total] = await this.prisma.$transaction([
       this.prisma.product.findMany({
         skip,
@@ -73,6 +119,12 @@ export class ProductService {
         include: {
           images: true,
           category: true,
+          sizeAndQuantities: {
+            select: {
+              size: true,
+              quantity: true,
+            },
+          },
         },
         orderBy: { createdAt: 'desc' },
       }),
@@ -87,6 +139,7 @@ export class ProductService {
       totalPages: Math.ceil(total / limit),
     };
   }
+
 
 
   async findOne(id: string) {

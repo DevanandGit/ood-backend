@@ -7,4 +7,5 @@ export declare class CreateProductDto {
     isStock?: boolean;
     isActive?: boolean;
     categoryId: string;
+    sizeAndQuantity: Record<string, number>;
 }

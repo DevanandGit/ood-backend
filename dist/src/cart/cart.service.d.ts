@@ -29,7 +29,7 @@ export declare class CartService {
             isActive: boolean;
             discountedPrice: import("@prisma/client/runtime/library").Decimal;
             actualPrice: import("@prisma/client/runtime/library").Decimal;
-            stockCount: number;
+            totalstockCount: number;
             isStock: boolean;
             categoryId: string;
         };
@@ -40,6 +40,7 @@ export declare class CartService {
         productId: string;
         customerProfileId: string | null;
         quantity: number;
+        sizeId: string;
     })[]>;
     updateCartItem(userId: string, cartItemId: string, updateCartDto: UpdateCartDto): Promise<{
         id: string;
@@ -48,6 +49,7 @@ export declare class CartService {
         productId: string;
         customerProfileId: string | null;
         quantity: number;
+        sizeId: string;
     }>;
     deletecart(userId: string, cartItemId: string): Promise<{
         message: string;

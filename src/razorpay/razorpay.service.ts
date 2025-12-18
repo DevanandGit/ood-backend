@@ -10,7 +10,7 @@ export class RazorpayService {
   constructor(@Inject('RAZORPAY_CLIENT') private readonly razorpayClient: Razorpay, private prisma: PrismaService) { }
 
   async createOrder(dto: CreatePaymentIntentDto, customerProfileId: string) {
-    const { productId, quantity, cartId, currency } = dto;
+    const { cartId, currency } = dto;
 
     const user = await this.prisma.customerProfile.findUnique({
       where: { userId: customerProfileId }
@@ -21,28 +21,11 @@ export class RazorpayService {
     let amount = 0;
     let orderItemsData = []; // for creating order_items
 
-    // 1️⃣ Calculate total amount
-    if (productId) {
-      const pdt = await this.prisma.product.findUnique({
-        where: { id: productId },
-      });
-      if (!pdt) throw new Error('Product not found');
-      if (quantity > pdt.stockCount) throw new Error('Insufficient stock');
-
-      amount = Number(pdt.discountedPrice) * quantity;
-
-      orderItemsData.push({
-        productId: pdt.id,
-        quantity,
-        discountedPrice: pdt.discountedPrice,
-        actualPrice: pdt.actualPrice,
-      });
-    }
-    else if (cartId) {
+    if (cartId) {
       // Get all cart items for the customer
       const cartItems = await this.prisma.cartItem.findMany({
         where: { customerProfileId: user.id },
-        include: { product: true },
+        include: { product: true, size: true },
       });
 
       if (!cartItems || cartItems.length === 0)
@@ -61,7 +44,7 @@ export class RazorpayService {
       });
     }
     else {
-      throw new Error('Either productId or cartId must be provided');
+      throw new Error(' cartId must be provided');
     }
 
     // 2️⃣ Create Order in DB with pending status
@@ -108,6 +91,7 @@ export class RazorpayService {
         razorpayOrder,
       };
     } catch (error) {
+
       console.error('Error creating Razorpay order:', error);
       // roll back the order if Razorpay order fails
       await this.prisma.order.delete({ where: { id: order.id } });

@@ -15,12 +15,16 @@ class AddToCartDto {
 }
 exports.AddToCartDto = AddToCartDto;
 __decorate([
-    (0, class_validator_1.IsUUID)(),
-    __metadata("design:type", String)
-], AddToCartDto.prototype, "productId", void 0);
-__decorate([
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1),
     __metadata("design:type", Number)
 ], AddToCartDto.prototype, "quantity", void 0);
+__decorate([
+    (0, class_validator_1.IsUUID)(),
+    __metadata("design:type", Object)
+], AddToCartDto.prototype, "sizeId", void 0);
+__decorate([
+    (0, class_validator_1.IsUUID)(),
+    __metadata("design:type", Object)
+], AddToCartDto.prototype, "productId", void 0);
 //# sourceMappingURL=add-to-cart.dto.js.map

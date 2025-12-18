@@ -59,7 +59,7 @@ let RazorpayService = class RazorpayService {
         this.prisma = prisma;
     }
     async createOrder(dto, customerProfileId) {
-        const { productId, quantity, cartId, currency } = dto;
+        const { cartId, currency } = dto;
         const user = await this.prisma.customerProfile.findUnique({
             where: { userId: customerProfileId }
         });
@@ -68,26 +68,10 @@ let RazorpayService = class RazorpayService {
         }
         let amount = 0;
         let orderItemsData = [];
-        if (productId) {
-            const pdt = await this.prisma.product.findUnique({
-                where: { id: productId },
-            });
-            if (!pdt)
-                throw new Error('Product not found');
-            if (quantity > pdt.stockCount)
-                throw new Error('Insufficient stock');
-            amount = Number(pdt.discountedPrice) * quantity;
-            orderItemsData.push({
-                productId: pdt.id,
-                quantity,
-                discountedPrice: pdt.discountedPrice,
-                actualPrice: pdt.actualPrice,
-            });
-        }
-        else if (cartId) {
+        if (cartId) {
             const cartItems = await this.prisma.cartItem.findMany({
                 where: { customerProfileId: user.id },
-                include: { product: true },
+                include: { product: true, size: true },
             });
             if (!cartItems || cartItems.length === 0)
                 throw new Error('Cart is empty');
@@ -104,7 +88,7 @@ let RazorpayService = class RazorpayService {
             });
         }
         else {
-            throw new Error('Either productId or cartId must be provided');
+            throw new Error(' cartId must be provided');
         }
         const order = await this.prisma.order.create({
             data: {
