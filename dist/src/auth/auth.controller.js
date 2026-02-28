@@ -31,6 +31,18 @@ let AuthController = class AuthController {
     async verifyOtp(otpVerifyDto) {
         return this.authService.verifyOtp(otpVerifyDto.email, otpVerifyDto.otp);
     }
+    async getMe(req) {
+        return this.authService.getMe(req.user.id);
+    }
+    async signOut() {
+        return { message: 'Signed out successfully' };
+    }
+    async updatePassword(req, body) {
+        return this.authService.updatePassword(req.user.id, body.currentPassword, body.newPassword);
+    }
+    async updateCustomerProfile(req, body) {
+        return this.authService.updateCustomerProfile(req.user.id, body);
+    }
     async getAdminProfile(req) {
         const userId = req.user.id;
         const role = req.user.role;
@@ -67,6 +79,39 @@ __decorate([
     __metadata("design:paramtypes", [otp_verify_dto_1.OtpVerifyDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "verifyOtp", null);
+__decorate([
+    (0, common_1.Get)('me'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "getMe", null);
+__decorate([
+    (0, common_1.Post)('signout'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "signOut", null);
+__decorate([
+    (0, common_1.Post)('update-password'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "updatePassword", null);
+__decorate([
+    (0, common_1.Patch)('customer/update'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "updateCustomerProfile", null);
 __decorate([
     (0, common_1.Get)('profile'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),

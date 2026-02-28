@@ -27,12 +27,21 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
     }
     async validate(payload) {
         const user = await this.prisma.user.findUnique({
-            where: { id: payload.sub },
+            where: { id: payload.sub ?? payload.id },
+            include: {
+                CustomerProfile: { select: { id: true } },
+                AdminProfile: { select: { id: true } },
+            },
         });
+        if (!user) {
+            throw new common_1.UnauthorizedException('User not found');
+        }
         return {
-            id: payload.sub,
-            email: payload.email,
-            role: payload.role,
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            customerProfile: user.CustomerProfile,
+            adminProfile: user.AdminProfile,
         };
     }
 };

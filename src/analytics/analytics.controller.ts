@@ -13,6 +13,11 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 export class AnalyticsController {
     constructor(private readonly analyticsService: AnalyticsService) { }
 
+    @Get('dashboard')
+    getDashboardStats() {
+        return this.analyticsService.getDashboardStats();
+    }
+
     @Get('revenue')
     getTotalRevenue(@Query() dto: DateRangeDto) {
         return this.analyticsService.getTotalRevenue(dto);

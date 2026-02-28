@@ -195,5 +195,66 @@ export class AuthService {
     return this.prisma.adminProfile.findUnique({ where: { userId: id } });
   }
 
+  /** Get current user (for session restore) */
+  async getMe(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        is_verified: true,
+        createdAt: true,
+        CustomerProfile: {
+          select: {
+            id: true,
+            addresses: true,
+          },
+        },
+      },
+    });
+    if (!user) throw new UnauthorizedException('User not found');
+    return { user };
+  }
+
+  /** Update password */
+  async updatePassword(userId: string, currentPassword: string, newPassword: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new UnauthorizedException('User not found');
+
+    if (user.password) {
+      const isValid = await bcrypt.compare(currentPassword, user.password);
+      if (!isValid) throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+    return { message: 'Password updated successfully' };
+  }
+
+  /** Update customer profile */
+  async updateCustomerProfile(userId: string, data: any) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const updateData: any = {};
+    if (data.email) updateData.email = data.email;
+
+    const updated = await this.prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+    return { user: updated, message: 'Profile updated successfully' };
+  }
+
 
 }

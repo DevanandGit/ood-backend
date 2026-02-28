@@ -1,33 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { json, urlencoded } from 'express';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  app.enableCors({
-    origin: '*', // or use '*' for all origins (not recommended for production)
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
+  // Enable rawBody globally (required for Stripe)
+  const app = await NestFactory.create(AppModule, {
+    rawBody: true,
   });
 
-  // Optional: set a global prefix (nice for staging/prod)
-  app.setGlobalPrefix('backend');
-  // Stripe webhook needs raw body
-  app.use(
-    '/api/webhooks/stripe',
-    json({
-      verify: (req: any, res, buf) => {
-        req.rawBody = buf; // 👈 Capture raw body here
-      },
-    }),
-  );
+  // CORS
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
 
-  // For all other routes
-  app.use(json());
-  app.use(urlencoded({ extended: true }));
+  // Global prefix
+  app.setGlobalPrefix('backend');
 
   // Validation
   app.useGlobalPipes(
@@ -38,11 +28,11 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors();
-
+  // Global response wrapper
   app.useGlobalInterceptors(new ResponseInterceptor());
 
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.PORT || 3001, '0.0.0.0');
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
+
 bootstrap();

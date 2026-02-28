@@ -32,6 +32,11 @@ const firebase_module_1 = require("./firebase/firebase.module");
 const device_token_module_1 = require("./token/device-token.module");
 const serve_static_1 = require("@nestjs/serve-static");
 const analytics_module_1 = require("./analytics/analytics.module");
+const reviews_module_1 = require("./reviews/reviews.module");
+const testimonials_module_1 = require("./testimonials/testimonials.module");
+const banners_module_1 = require("./banners/banners.module");
+const newsletter_module_1 = require("./newsletter/newsletter.module");
+const contact_module_1 = require("./contact/contact.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -58,6 +63,11 @@ exports.AppModule = AppModule = __decorate([
             analytics_module_1.AnalyticsModule,
             firebase_module_1.FirebaseModule,
             device_token_module_1.DeviceTokenModule,
+            reviews_module_1.ReviewsModule,
+            testimonials_module_1.TestimonialsModule,
+            banners_module_1.BannersModule,
+            newsletter_module_1.NewsletterModule,
+            contact_module_1.ContactModule,
             razorpay_module_1.RazorpayModule.forRoot({
                 key_id: process.env.RAZORPAY_KEY_ID,
                 key_secret: process.env.RAZORPAY_KEY_SECRET,

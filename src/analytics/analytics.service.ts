@@ -9,6 +9,39 @@ import { PaymentStatus, OrderStatus } from '@prisma/client';
 export class AnalyticsService {
     constructor(private prisma: PrismaService) { }
 
+    // Dashboard summary stats
+    async getDashboardStats() {
+        const [
+            totalProducts,
+            totalCategories,
+            totalUsers,
+            totalOrders,
+            revenueResult,
+        ] = await this.prisma.$transaction([
+            this.prisma.product.count(),
+            this.prisma.category.count(),
+            this.prisma.user.count({ where: { role: 'CUSTOMER' } }),
+            this.prisma.order.count(),
+            this.prisma.order.aggregate({
+                _sum: { totalAmount: true },
+                where: { paymentStatus: PaymentStatus.completed },
+            }),
+        ]);
+
+        const lowStockItems = await this.prisma.product.count({
+            where: { totalstockCount: { lte: 5 }, isActive: true },
+        });
+
+        return {
+            totalProducts,
+            lowStockItems,
+            totalCategories,
+            totalUsers,
+            totalOrders,
+            totalRevenue: revenueResult._sum.totalAmount ?? 0,
+        };
+    }
+
     private getDateFilter(dto: DateRangeDto) {
         return {
             createdAt: {

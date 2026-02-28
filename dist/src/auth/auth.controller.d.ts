@@ -26,6 +26,50 @@ export declare class AuthController {
         message: string;
         status: number;
     }>;
+    getMe(req: any): Promise<{
+        user: {
+            id: string;
+            createdAt: Date;
+            CustomerProfile: {
+                id: string;
+                addresses: {
+                    id: string;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    name: string;
+                    customerProfileId: string;
+                    address: string;
+                    city: string;
+                    state: string;
+                    postalCode: string;
+                    country: string;
+                    phone: string;
+                    isDefault: boolean;
+                }[];
+            };
+            email: string;
+            role: import(".prisma/client").$Enums.Role;
+            is_verified: boolean;
+        };
+    }>;
+    signOut(): Promise<{
+        message: string;
+    }>;
+    updatePassword(req: any, body: {
+        currentPassword: string;
+        newPassword: string;
+    }): Promise<{
+        message: string;
+    }>;
+    updateCustomerProfile(req: any, body: any): Promise<{
+        user: {
+            id: string;
+            createdAt: Date;
+            email: string;
+            role: import(".prisma/client").$Enums.Role;
+        };
+        message: string;
+    }>;
     getAdminProfile(req: any): Promise<{
         id: string;
         createdAt: Date;

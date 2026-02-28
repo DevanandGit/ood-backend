@@ -24,6 +24,11 @@ import { FirebaseModule } from './firebase/firebase.module';
 import { DeviceTokenModule } from './token/device-token.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { TestimonialsModule } from './testimonials/testimonials.module';
+import { BannersModule } from './banners/banners.module';
+import { NewsletterModule } from './newsletter/newsletter.module';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
   imports: [
@@ -47,6 +52,11 @@ import { AnalyticsModule } from './analytics/analytics.module';
     AnalyticsModule,
     FirebaseModule,
     DeviceTokenModule,
+    ReviewsModule,
+    TestimonialsModule,
+    BannersModule,
+    NewsletterModule,
+    ContactModule,
 
     RazorpayModule.forRoot({
       key_id: process.env.RAZORPAY_KEY_ID, // Use environment variables for keys

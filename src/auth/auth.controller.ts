@@ -5,12 +5,8 @@ import {
   Body,
   UseGuards,
   Get,
-  Param,
   Patch,
   Request,
-  UseInterceptors,
-  UploadedFile,
-  ForbiddenException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AdminLoginDto, LoginDto } from './dto/login.dto';
@@ -34,6 +30,37 @@ export class AuthController {
   @Post('verify-otp')
   async verifyOtp(@Body() otpVerifyDto: OtpVerifyDto) {
     return this.authService.verifyOtp(otpVerifyDto.email, otpVerifyDto.otp);
+  }
+
+  // Session restore - used by frontend to validate stored token
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getMe(@Request() req) {
+    return this.authService.getMe(req.user.id);
+  }
+
+  // Sign out - frontend clears token, this is a no-op acknowledgement
+  @Post('signout')
+  @UseGuards(JwtAuthGuard)
+  async signOut() {
+    return { message: 'Signed out successfully' };
+  }
+
+  // Update password (for customers)
+  @Post('update-password')
+  @UseGuards(JwtAuthGuard)
+  async updatePassword(
+    @Request() req,
+    @Body() body: { currentPassword: string; newPassword: string },
+  ) {
+    return this.authService.updatePassword(req.user.id, body.currentPassword, body.newPassword);
+  }
+
+  // Update customer profile
+  @Patch('customer/update')
+  @UseGuards(JwtAuthGuard)
+  async updateCustomerProfile(@Request() req, @Body() body: any) {
+    return this.authService.updateCustomerProfile(req.user.id, body);
   }
 
   @Get('profile')

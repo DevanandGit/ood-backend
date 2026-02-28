@@ -1,0 +1,23 @@
+import { Controller, Post, Get, Body } from '@nestjs/common';
+import { NewsletterService } from './newsletter.service';
+import { SubscribeNewsletterDto } from './dto/newsletter.dto';
+
+@Controller('newsletter')
+export class NewsletterController {
+    constructor(private readonly newsletterService: NewsletterService) { }
+
+    @Post('subscribe')
+    subscribe(@Body() dto: SubscribeNewsletterDto) {
+        return this.newsletterService.subscribe(dto.email);
+    }
+
+    @Post('unsubscribe')
+    unsubscribe(@Body() dto: SubscribeNewsletterDto) {
+        return this.newsletterService.unsubscribe(dto.email);
+    }
+
+    @Get()
+    findAll() {
+        return this.newsletterService.findAll();
+    }
+}

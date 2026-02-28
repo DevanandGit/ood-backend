@@ -208,6 +208,62 @@ let AuthService = class AuthService {
         }
         return this.prisma.adminProfile.findUnique({ where: { userId: id } });
     }
+    async getMe(userId) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                id: true,
+                email: true,
+                role: true,
+                is_verified: true,
+                createdAt: true,
+                CustomerProfile: {
+                    select: {
+                        id: true,
+                        addresses: true,
+                    },
+                },
+            },
+        });
+        if (!user)
+            throw new common_1.UnauthorizedException('User not found');
+        return { user };
+    }
+    async updatePassword(userId, currentPassword, newPassword) {
+        const user = await this.prisma.user.findUnique({ where: { id: userId } });
+        if (!user)
+            throw new common_1.UnauthorizedException('User not found');
+        if (user.password) {
+            const isValid = await bcrypt.compare(currentPassword, user.password);
+            if (!isValid)
+                throw new common_1.UnauthorizedException('Current password is incorrect');
+        }
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: { password: hashedPassword },
+        });
+        return { message: 'Password updated successfully' };
+    }
+    async updateCustomerProfile(userId, data) {
+        const user = await this.prisma.user.findUnique({ where: { id: userId } });
+        if (!user)
+            throw new common_1.UnauthorizedException('User not found');
+        const updateData = {};
+        if (data.email)
+            updateData.email = data.email;
+        const updated = await this.prisma.user.update({
+            where: { id: userId },
+            data: updateData,
+            select: {
+                id: true,
+                email: true,
+                role: true,
+                createdAt: true,
+            },
+        });
+        return { user: updated, message: 'Profile updated successfully' };
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([

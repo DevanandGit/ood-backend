@@ -154,4 +154,42 @@ export declare class AuthService {
         updatedAt: Date;
         notes: string | null;
     }>;
+    getMe(userId: string): Promise<{
+        user: {
+            id: string;
+            createdAt: Date;
+            CustomerProfile: {
+                id: string;
+                addresses: {
+                    id: string;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    name: string;
+                    customerProfileId: string;
+                    address: string;
+                    city: string;
+                    state: string;
+                    postalCode: string;
+                    country: string;
+                    phone: string;
+                    isDefault: boolean;
+                }[];
+            };
+            email: string;
+            role: import(".prisma/client").$Enums.Role;
+            is_verified: boolean;
+        };
+    }>;
+    updatePassword(userId: string, currentPassword: string, newPassword: string): Promise<{
+        message: string;
+    }>;
+    updateCustomerProfile(userId: string, data: any): Promise<{
+        user: {
+            id: string;
+            createdAt: Date;
+            email: string;
+            role: import(".prisma/client").$Enums.Role;
+        };
+        message: string;
+    }>;
 }
